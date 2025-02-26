@@ -25,9 +25,8 @@
  try{
     const connection=await db.getConnection()
     // checking to see if this farmer already exist
-    const existFarmer=await connection.execute(`select farmer_id from farmer where farmer_id=?`,[farmer_id])
-    console.log(existFarmer[0])
-    if(existFarmer[0]==!null){
+    const [existFarmer]=await connection.execute('select farmer_id from farmer where farmer_id=?',[farmer_id])
+    if(existFarmer.length>0){
         return res.send({msg:`Farmer with id ${farmer_id} already exist`})
     }else{
         const {error}=farmerSchema.validate(req.body)

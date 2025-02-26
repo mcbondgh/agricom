@@ -4,9 +4,11 @@ let cors = require('cors');
 // initialze the express app
 const express = require('express');
 const farmerRouter = require('./Routes/FarmerRouter');
+const employeeRouter=require('../backend/Routes/EmployeeRouter')
 const app = express();
 app.use(cors());
 app.use(express.json())
+app.use(employeeRouter)
 app.use(farmerRouter)
 const PORT_NUMBER = process.env.SERVER_PORT;
 
