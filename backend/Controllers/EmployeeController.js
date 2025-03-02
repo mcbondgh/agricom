@@ -1,5 +1,7 @@
 const DbConfig=require('../configs/DbConfig')
+const EmployeeDataDto=require('../Dto/EmployeeDataDto')
 const db=new DbConfig()
+
 class EmployeeController{
     constructor(){
 
@@ -12,7 +14,6 @@ class EmployeeController{
 const other_name = otherNameValue !== undefined ? otherNameValue : null;
 const commentsValue = employeeDataDto.getComments();
 const comments = commentsValue !== undefined ? commentsValue : null;
-    console.log("employee details "+employeeDataDto.getEmployee_id(),employeeDataDto.getFirst_name(),employeeDataDto.getLast_name())
     const connection=await db.getConnection()
     await connection.execute(`INSERT INTO EMPLOYEES(EMPLOYEE_id, 
         first_name,last_name,other_name,email_address, digital_address,gender,
@@ -26,6 +27,35 @@ const comments = commentsValue !== undefined ? commentsValue : null;
       throw err
     }
     
+    }
+    
+     async getAllEmployees() {
+       
+        const allEmployees=[]
+        try{
+         const connection=await db.getConnection()
+         const [allEmployess]=await connection.execute("SELECT * FROM EMPLOYEES")
+         allEmployess.forEach((employee)=>{
+            const employeeDataDto=new EmployeeDataDto()
+            employeeDataDto.setEmployee_id(employee.EMPLOYEE_id)
+            employeeDataDto.setFirst_name(employee.first_name)
+            employeeDataDto.setLast_name(employee.last_name)
+            employeeDataDto.setEmail_address(employee.email_address)
+            employeeDataDto.setDigital_address(employee.digital_address)
+            employeeDataDto.setGender(employee.gender)
+            employeeDataDto.setMobile_numb(employee.mobile_numbe)
+            employeeDataDto.setLocation(employee.location)
+            employeeDataDto.setDate_of_employment(employee.date_of_employment)
+            employeeDataDto.setDate_created(employee.date_created)
+            employeeDataDto.setSalary(employee.salary)
+             allEmployees.push(employeeDataDto)
+         })
+         connection.end()
+        }catch(err){
+            throw err
+        }
+       
+        return allEmployees
     }
 }
 module.exports=EmployeeController
