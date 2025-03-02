@@ -79,7 +79,7 @@ class FarmersDto {
         return this.farm_gps_cordinate
     }
     setFarm_gps_cordinate(farm_gps_cordinate) {
-        this.ffarm_gps_cordinate = farm_gps_cordinate
+        this.farm_gps_cordinate = farm_gps_cordinate
     }
     getFarming_experience() {
         return this.farming_experience

@@ -1,4 +1,5 @@
 const DbConfig=require('../configs/DbConfig')
+const FarmersDto=require('../Dto/FarmerDto')
 const db=new DbConfig()
 class FarmerController{
     constructor(){
@@ -23,6 +24,30 @@ class FarmerController{
      }catch(err){
       throw new Error(err) 
      }
+  
+    }
+    async getAllFarmers(){
+      const allFarmers=[]
+      const connection=await db.getConnection()
+      const [farmers]=await connection.execute("select*from farmer")
+      console.log(farmers)
+      farmers.forEach((farmer)=>{
+      const farmersDto=new FarmersDto()
+      farmersDto.setFrmerID(farmer.FARMER_ID)
+      farmersDto.setSurname(farmer.SURNAME)
+      farmersDto.setGender(farmer.GENDER)
+      farmersDto.setLastname(farmer.LAST_NAME)
+      farmersDto.setAge(farmer.AGE)
+      farmersDto.setContract_details(farmer.CONTACT_DETAILS)
+      farmersDto.setResidential_address(farmer.RESIDENTIAL_ADDRESS)
+      farmersDto.setFarming_experience(farmer.FARMING_EXPERIENCE)
+      farmersDto.setEducational_level(farmer.EDUCATION_LEVEL)
+      farmersDto.setFarm_gps_cordinate(farmer.FARM_GPS_CORDINATES)
+      farmersDto.setFarm_association_memb(farmer.FARM_ASSOCIATION_MEMB)
+      farmersDto.setDate_created(farmer.DATE_CREATED)
+      allFarmers.push(farmersDto)
+      })
+      return allFarmers
     }
 }
 module.exports=FarmerController
