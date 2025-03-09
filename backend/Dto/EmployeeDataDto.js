@@ -38,7 +38,7 @@ class EmployeeDataDto{
 
     }
     getAge(){
-        this.age=age
+        return this.age
     }
     setAge(age){
         this.age=age

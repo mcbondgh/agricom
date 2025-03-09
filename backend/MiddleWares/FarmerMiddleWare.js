@@ -47,4 +47,56 @@ console.log(err)
  }
  
  }
- module.exports=validateFarmerInput
+ async function updateMiddleware(req,res,next) {
+   try{
+     const farmer_Id=req.params.farmer_Id
+     const connection=await db.getConnection()
+     const [existFarmer]=await connection.execute('select farmer_id from farmer where farmer_id=?',[farmer_Id])
+     if(existFarmer.length>0){
+      const farmerObject=new FarmersDto()
+      const ageValue=req.body.age
+      const age=ageValue!==undefined?ageValue:null
+      const contact_detailsVlue=req.body.contract_details
+      const contact_details=contact_detailsVlue!==undefined?contact_detailsVlue:null
+      const farming_experienceValue=req.body.farming_experience
+      const farming_experience=farming_experienceValue!==undefined?farming_experienceValue:null
+      const educational_levelValue=req.body.educational_level
+      const educational_level=educational_levelValue!==undefined?educational_levelValue:null
+      const farm_gps_cordinateValue=req.body.farm_gps_cordinate
+      const farm_gps_cordinate=farm_gps_cordinateValue!==undefined?farm_gps_cordinateValue:null
+      const farm_association_membValue=req.body.farm_association_memb
+      const farm_association_memb=farm_association_membValue!==undefined?farm_association_membValue:null
+      const residential_addressValue=req.body.residential_address
+      const residential_address=residential_addressValue!==undefined?residential_addressValue:null
+      farmerObject.setAge(age)
+      farmerObject.setContract_details(contact_details)
+      farmerObject.setFarming_experience(farming_experience)
+      farmerObject.setEducational_level(educational_level)
+      farmerObject.setFarm_gps_cordinate(farm_gps_cordinate)
+      farmerObject.setFarm_association_memb(farm_association_memb)
+      farmerObject.setResidential_address(residential_address)
+      farmerObject.setFrmerID(farmer_Id)
+     farmerController.updateFarmer(farmerObject)
+      next()
+     }else{
+        return res.send({msg:"This farmer already exist"})
+     }
+     connection.end()
+   }catch(err){
+    console.log(err)
+   }
+ }
+ async function deleteFarmerMiddleware(req,res,next) {
+    const farmerIdValue=req.params.farmerId
+    const connection=await db.getConnection()
+    const [existFarmer]=await connection.execute("select*from farmer where farmer_id=? and IS_DELETED=?",[farmerIdValue,false])
+    if(existFarmer.length>0){
+        farmerController.deleteFamer(farmerIdValue)
+        next()
+    }else{
+     res.send({msg:`farmer with id ${farmerIdValue} is not registered`})
+    }
+    
+   
+ }
+ module.exports={validateFarmerInput,updateMiddleware,deleteFarmerMiddleware}

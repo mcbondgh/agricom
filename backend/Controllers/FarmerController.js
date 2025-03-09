@@ -8,7 +8,6 @@ class FarmerController{
     
     async saveFarmerInformation(farmerDto){
      try{
-      console.log(farmerDto)
       const connection=await db.getConnection()
       await connection.execute(`INSERT INTO FARMER(FARMER_ID,SURNAME,LAST_NAME,
         GENDER,AGE,CONTACT_DETAILS
@@ -30,7 +29,6 @@ class FarmerController{
       const allFarmers=[]
       const connection=await db.getConnection()
       const [farmers]=await connection.execute("select*from farmer")
-      console.log(farmers)
       farmers.forEach((farmer)=>{
       const farmersDto=new FarmersDto()
       farmersDto.setFrmerID(farmer.FARMER_ID)
@@ -48,6 +46,34 @@ class FarmerController{
       allFarmers.push(farmersDto)
       })
       return allFarmers
+    }
+    async updateFarmer(farmerUpdate){
+      const connection=await db.getConnection()
+      if(farmerUpdate.getAge()!==null){
+        await connection.execute(`update farmer set AGE=? where FARMER_ID=?`,[farmerUpdate.getAge(),farmerUpdate.getFarmerId()])
+      }
+      if(farmerUpdate.getResidential_address()!==null){
+        await connection.execute(`update farmer set RESIDENTIAL_ADDRESS=? where FARMER_ID=?`,[farmerUpdate.getResidential_address(),farmerUpdate.getFarmerId()])
+      }
+      if(farmerUpdate.getContract_details()!==null){
+        await connection.execute(`update farmer set CONTACT_DETAILS=? where FARMER_ID=?`,[farmerUpdate.getContract_details(),farmerUpdate.getFarmerId()])
+      }
+      if(farmerUpdate.getFarming_experience()!==null){
+        await connection.execute(`update farmer set FARMING_EXPERIENCE=? where FARMER_ID=?`,[farmerUpdate.getFarming_experience(),farmerUpdate.getFarmerId()])
+      }
+      if(farmerUpdate.getEducational_level()!==null){
+        await connection.execute(`update farmer set EDUCATION_LEVEL=? where FARMER_ID=?`,[farmerUpdate.getEducational_level(),farmerUpdate.getFarmerId()])
+      }
+      if(farmerUpdate.getFarm_gps_cordinate()!==null){
+        await connection.execute(`update farmer set FARM_GPS_CORDINATES=? where FARMER_ID=?`,[farmerUpdate.getFarm_gps_cordinate(),farmerUpdate.getFarmerId()])
+      }
+      if(farmerUpdate.getFarm_association_memb()!==null){
+        await connection.execute(`update farmer set FARM_ASSOCIATION_MEMB=? where FARMER_ID=?`,[farmerUpdate.getFarm_association_memb(),farmerUpdate.getFarmerId()])
+      }
+    }
+    async deleteFamer(farmerId){
+     const connection=await db.getConnection()
+     await connection.execute("update farmer set IS_DELETED=? where FARMER_ID=?",[true,farmerId])
     }
 }
 module.exports=FarmerController
