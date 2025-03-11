@@ -59,32 +59,16 @@ const comments = commentsValue !== undefined ? commentsValue : null;
     }
     async updateEmployeeDetails(employeeObject) {
             const connection=await db.getConnection()
-            if(employeeObject.getAge()!==null){
-              await connection.execute(`update employees set age=? where EMPLOYEE_id=?`,[employeeObject.getAge(),employeeObject.getEmployee_id()])
-            }
-            if(employeeObject.getComments()!==null){
-              await connection.execute(`update employees set comments=? where EMPLOYEE_id=?`,[employeeObject.getComments(),employeeObject.getEmployee_id()])
-            }
-            if(employeeObject.getEmail_address()!==null){
-              await connection.execute(`update employees set email_address=? where EMPLOYEE_id=?`,[employeeObject.getEmail_address(),employeeObject.getEmployee_id()])
-            }
-            if(employeeObject.getDigital_address()!==null){
-              await connection.execute(`update employees set digital_address=? where EMPLOYEE_id=?`,[employeeObject.getDigital_address(),employeeObject.getEmployee_id()])
-            }
-            if(employeeObject.getMobile_numb()!==null){
-              await connection.execute(`update employees set mobile_numbe=? where EMPLOYEE_id=?`,[employeeObject.getMobile_numb(),employeeObject.getEmployee_id()])
-            }
-            if(employeeObject.getLocation()!==null){
-              await connection.execute(`update employees set location=? where EMPLOYEE_id=?`,[employeeObject.getLocation(),employeeObject.getEmployee_id()])
-            }
-            if(employeeObject.getSalary()!==null){
-              await connection.execute(`update employees set salary=? where FARMER_ID=?`,[employeeObject.getSalary(),employeeObject.getEmployee_id()])
-            }
+              await connection.execute(`update employees set age=?,comments=?,email_address=?,digital_address=?,
+                mobile_numbe=?,location=?,salary=? where EMPLOYEE_id=?`,
+                [employeeObject.getAge(),employeeObject.getComments(),employeeObject.getEmail_address(),
+                  employeeObject.getDigital_address(),employeeObject.getMobile_numb(),employeeObject.getLocation(),
+                  employeeObject.getSalary(),employeeObject.getEmployee_id()])
 
     }
     async delete_employee(employeeId) {
       const connection=await db.getConnection()
-      await connection.execute("update employees set IS_DELETED=? where EMPLOYEE_id=?",[true,employeeId])
+      await connection.execute("update employees set IS_DELETED=?,date_deleted=? where EMPLOYEE_id=?",[true,new Date(Date.now()),employeeId])
     }
 }
 module.exports=EmployeeController

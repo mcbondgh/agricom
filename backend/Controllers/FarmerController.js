@@ -49,27 +49,12 @@ class FarmerController{
     }
     async updateFarmer(farmerUpdate){
       const connection=await db.getConnection()
-      if(farmerUpdate.getAge()!==null){
-        await connection.execute(`update farmer set AGE=? where FARMER_ID=?`,[farmerUpdate.getAge(),farmerUpdate.getFarmerId()])
-      }
-      if(farmerUpdate.getResidential_address()!==null){
-        await connection.execute(`update farmer set RESIDENTIAL_ADDRESS=? where FARMER_ID=?`,[farmerUpdate.getResidential_address(),farmerUpdate.getFarmerId()])
-      }
-      if(farmerUpdate.getContract_details()!==null){
-        await connection.execute(`update farmer set CONTACT_DETAILS=? where FARMER_ID=?`,[farmerUpdate.getContract_details(),farmerUpdate.getFarmerId()])
-      }
-      if(farmerUpdate.getFarming_experience()!==null){
-        await connection.execute(`update farmer set FARMING_EXPERIENCE=? where FARMER_ID=?`,[farmerUpdate.getFarming_experience(),farmerUpdate.getFarmerId()])
-      }
-      if(farmerUpdate.getEducational_level()!==null){
-        await connection.execute(`update farmer set EDUCATION_LEVEL=? where FARMER_ID=?`,[farmerUpdate.getEducational_level(),farmerUpdate.getFarmerId()])
-      }
-      if(farmerUpdate.getFarm_gps_cordinate()!==null){
-        await connection.execute(`update farmer set FARM_GPS_CORDINATES=? where FARMER_ID=?`,[farmerUpdate.getFarm_gps_cordinate(),farmerUpdate.getFarmerId()])
-      }
-      if(farmerUpdate.getFarm_association_memb()!==null){
-        await connection.execute(`update farmer set FARM_ASSOCIATION_MEMB=? where FARMER_ID=?`,[farmerUpdate.getFarm_association_memb(),farmerUpdate.getFarmerId()])
-      }
+        await connection.execute(`update farmer set AGE=?,RESIDENTIAL_ADDRESS=?,
+          CONTACT_DETAILS=?,FARMING_EXPERIENCE=?,EDUCATION_LEVEL=?,FARM_GPS_CORDINATES=?,FARM_ASSOCIATION_MEMB=? where FARMER_ID=?` 
+          ,[farmerUpdate.getAge(),farmerUpdate.getResidential_address(),farmerUpdate.getContract_details()
+            ,farmerUpdate.getFarming_experience(),farmerUpdate.getEducational_level(),
+            farmerUpdate.getFarm_gps_cordinate(),farmerUpdate.getFarm_association_memb(),farmerUpdate.getFarmerId()])
+     
     }
     async deleteFamer(farmerId){
      const connection=await db.getConnection()

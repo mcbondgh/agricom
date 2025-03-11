@@ -21,11 +21,11 @@
  // creating FarmerController object
  const farmerController=new FarmerController()
  async function validateFarmerInput(req,res,next) {
-    const farmer_id=req.body.farmer_Id
+    const contact=req.body.contract_details
  try{
     const connection=await db.getConnection()
     // checking to see if this farmer already exist
-    const [existFarmer]=await connection.execute('select farmer_id from farmer where farmer_id=?',[farmer_id])
+    const [existFarmer]=await connection.execute('select * from farmer where CONTACT_DETAILS=? && IS_DELETED=?',[contact,true])
     if(existFarmer.length>0){
         return res.send({msg:`Farmer with id ${farmer_id} already exist`})
     }else{
@@ -55,19 +55,19 @@ console.log(err)
      if(existFarmer.length>0){
       const farmerObject=new FarmersDto()
       const ageValue=req.body.age
-      const age=ageValue!==undefined?ageValue:null
+      const age=ageValue!==undefined?ageValue:'N/A'
       const contact_detailsVlue=req.body.contract_details
-      const contact_details=contact_detailsVlue!==undefined?contact_detailsVlue:null
+      const contact_details=contact_detailsVlue!==undefined?contact_detailsVlue:'N/A'
       const farming_experienceValue=req.body.farming_experience
-      const farming_experience=farming_experienceValue!==undefined?farming_experienceValue:null
+      const farming_experience=farming_experienceValue!==undefined?farming_experienceValue:'N/A'
       const educational_levelValue=req.body.educational_level
-      const educational_level=educational_levelValue!==undefined?educational_levelValue:null
+      const educational_level=educational_levelValue!==undefined?educational_levelValue:'N/A'
       const farm_gps_cordinateValue=req.body.farm_gps_cordinate
-      const farm_gps_cordinate=farm_gps_cordinateValue!==undefined?farm_gps_cordinateValue:null
+      const farm_gps_cordinate=farm_gps_cordinateValue!==undefined?farm_gps_cordinateValue:'N/A'
       const farm_association_membValue=req.body.farm_association_memb
-      const farm_association_memb=farm_association_membValue!==undefined?farm_association_membValue:null
+      const farm_association_memb=farm_association_membValue!==undefined?farm_association_membValue:'N/A'
       const residential_addressValue=req.body.residential_address
-      const residential_address=residential_addressValue!==undefined?residential_addressValue:null
+      const residential_address=residential_addressValue!==undefined?residential_addressValue:'N/A'
       farmerObject.setAge(age)
       farmerObject.setContract_details(contact_details)
       farmerObject.setFarming_experience(farming_experience)

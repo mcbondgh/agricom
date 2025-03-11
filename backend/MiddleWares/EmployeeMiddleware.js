@@ -54,19 +54,19 @@ async function updateEmployeeMiddleWare(req,res,next) {
    if(existEmployee.length>0){
     const employeesobject=new EmployeeDataDto()
     const email_addressValue=req.body.email_address
-    const email_address=email_addressValue!==undefined?email_addressValue:null
+    const email_address=email_addressValue!==undefined?email_addressValue:'N/A'
     const digital_addressValue=req.body.digital_address
-    const digital_address=digital_addressValue!==undefined?digital_addressValue:null
+    const digital_address=digital_addressValue!==undefined?digital_addressValue:'N/A'
     const mobile_numbeValue=req.body.mobile_numbe
-    const mobile_numbe=mobile_numbeValue!==undefined?mobile_numbeValue:null
+    const mobile_numbe=mobile_numbeValue!==undefined?mobile_numbeValue:'N/A'
     const locationValue=req.body.location
-    const location=locationValue!==undefined?locationValue:null
+    const location=locationValue!==undefined?locationValue:'N/A'
     const salaryValue=req.body.salary
-    const salary=salaryValue!==undefined?salaryValue:null
+    const salary=salaryValue!==undefined?salaryValue:'N/A'
     const commentsValue=req.body.comments
-    const comments=commentsValue!==undefined?commentsValue:null
+    const comments=commentsValue!==undefined?commentsValue:'N/A'
     const ageValue=req.body.age
-    const age=ageValue!==undefined?ageValue:null
+    const age=ageValue!==undefined?ageValue:'N/A'
     employeesobject.setAge(age)
     employeesobject.setComments(comments)
     employeesobject.setMobile_numb(mobile_numbe)
@@ -76,7 +76,6 @@ async function updateEmployeeMiddleWare(req,res,next) {
     employeesobject.setEmail_address(email_address)
     employeesobject.setEmployee_id(employeeId)
     employeeController.updateEmployeeDetails(employeesobject)
-    console.log(employeesobject)
     next()
    }else{
     res.send({msg:"Employee Does not exist create employee before update"})
