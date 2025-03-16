@@ -19,7 +19,7 @@ export function DrawerComponent() {
             titleText: "text-white", 
             closeIcon: "text-white", 
             closeButton:"absolute end-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-gray-400 hover:bg-green-700 hover:text-white"
-          }
+           }
           }
         } 
           titleIcon={() => <></>} />

@@ -65,7 +65,6 @@ export function SidebarComponent({menuIsOpen}) {
           <Sidebar.Collapse icon={GiFruitTree} label={isHovered || menuIsOpen ? "Crops & Yield" : undefined}
           open={openCollapse === 'crops'} 
           onClick={() => handleCollapseClick('crops')}>
-          {/* <Sidebar.Item icon = {(isHovered || menuIsOpen) && RiAddBoxLine} href="#">{isHovered || menuIsOpen ? "Add Crop" : undefined}</Sidebar.Item> */}
           <Sidebar.Item icon = {(isHovered || menuIsOpen) && FaBoxes} href="/manage-crops">{isHovered || menuIsOpen ? "Crop Yield" : undefined}</Sidebar.Item>
           <Sidebar.Item icon = {(isHovered || menuIsOpen) && TbActivity} href="/farm-activity">{isHovered || menuIsOpen ? "Farm Activity" : undefined}</Sidebar.Item>
           </Sidebar.Collapse>
