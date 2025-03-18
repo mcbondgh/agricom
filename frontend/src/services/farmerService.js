@@ -3,7 +3,7 @@ import axios from 'axios'
 const FarmerService = {
     registerFarmer: async (farmerData) => {
         try {
-            const response = await axios.post("http://localhost:3000/auth/login", farmerData)
+            const response = await axios.post("http://localhost:200/agricomfarms/agrocom/registerfarmer", farmerData)
             const data = response.data;
             return data;
         } catch (error) {
@@ -14,7 +14,7 @@ const FarmerService = {
     // Fetch all farmers
     getFarmers: async () => {
         try {
-            const response = await axios.get("http://localhost:3000/farmers/get-all", {withCredentials: true})
+            const response = await axios.get("http://localhost:200/agricomfarms/agrocom/get-all", {withCredentials: true})
             const data = response.data;
             return data || null;
         } catch (error) {

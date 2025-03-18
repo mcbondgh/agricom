@@ -4,7 +4,7 @@ const AuthService  = {
     // Login method: Sends username and password to the server
     login: async (userData) => {
         try {
-            const response = await axios.post("http://localhost:3000/auth/login", userData,{withCredentials: true})
+            const response = await axios.post("http://localhost:200/agricom/auth/login", userData,{withCredentials: true})
             const data = response.data;
             if (response.status === 200) {
                 return { success: true, user: data.session.user, authenticated: data.session.authenticated };
@@ -20,7 +20,7 @@ const AuthService  = {
     // Logout method: Ends the user session
     logout: async () => {
         try {
-            const response = await axios.post("http://localhost:3000/auth/logout",{withCredentials: true})
+            const response = await axios.post("http://localhost:200/agricom/auth/logout",{withCredentials: true})
             if (response.status == 200) {
                 return { success: true };
             } else {
