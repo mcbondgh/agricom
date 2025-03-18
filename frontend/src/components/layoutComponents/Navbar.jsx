@@ -9,7 +9,7 @@ import { DrawerComponent } from "../ui/Drawer";
 
 export function NavbarComponent() {
   const User = {
-    name: "Richard Benson",
+    name: "Richard Owens",
     email: "richard12@gmail.com"
   }
   return (
