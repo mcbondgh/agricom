@@ -1,18 +1,28 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {Stepper, Step, StepLabel} from '@mui/material'
 import FarmerInfo from './addFarmerComponents/FarmerInfo';
 import FarmLandInfo from './addFarmerComponents/FarmLandInfo';
 import FarmYieldInfo from './addFarmerComponents/FarmYieldInfo';
 import { Button } from 'flowbite-react';
-
+import FarmerService from '../../../../services/farmerService';
 function AddFarmer() {
     const [formData, setFormData] = useState({})
     const [activeStep, setActiveStep] = useState(0);
-
-    const handleSubmit = () => {
-        console.log("--Form submitted--")
-        console.log(formData)
-        
+     //navigate  
+     const navigate = useNavigate();
+     //Function to handle farmer registration
+    const handleFarmerRegistration = async() => {
+        console.log("--Form submitted--|| ", formData)
+        const response = await FarmerService.registerFarmer(formData);
+        if (response.success) {
+            //
+            navigate("/manage-farmer")
+        }else {
+            console.log("Error")
+        }
+        //resetting form data after submission
+        setFormData(null)
     }
     //function to update form date when stepper changes
     const updateFormData = (newData)=> {
@@ -49,7 +59,7 @@ function AddFarmer() {
             <Button gradientMonochrome="success" disabled = {activeStep === 0} onClick={handlePrevious}>Previous</Button>
             <div>
                 {activeStep < 2 && <Button gradientMonochrome="success"  onClick={handleNext}>Next</Button>}
-                {activeStep === 2 && <Button gradientMonochrome="success"  onClick={handleSubmit}>Submit</Button>}
+                {activeStep === 2 && <Button gradientMonochrome="success"  onClick={handleFarmerRegistration}>Submit</Button>}
             </div>
         </div>
     </main>
