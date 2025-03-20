@@ -1,40 +1,86 @@
-import { ModalComponent } from "../../../components/ui/Modal"
-import AddFarmer from "../manageFarmer/addFarmer/AddFarmer"
+import { ModalComponent } from "../../../components/ui/Modal";
+import AddFarmer from "../manageFarmer/addFarmer/AddFarmer";
 import { FiPlus } from "react-icons/fi";
-import  { TableComponent }  from "../../../components/ui/Table";
+import { TableComponent } from "../../../components/ui/Table";
 import { Card } from "flowbite-react";
+import { useState, useEffect } from "react";
+import SearchBar from "../../../components/ui/SearchBar";
+import FarmerService from "../../../services/farmerService";
 
 function ManageFarmer() {
+  const tableHeadings = ["ID", "Email", "First Name", "Last Name", "Avatar"];
 
-const tableHeadings = [
-  "First Name", "Last Name", "Email", "Age", "Work Experience", 
-  "Contact", "Country", "Status", "Gender", "Actions"
-];
+  // State for fetched table content and filtered content
+  const [tableContent, setTableContent] = useState([]);
+  const [filteredTableContent, setFilteredTableContent] = useState([]);
 
-const tableContent = [
-  ["John", "Doe", "john.doe@example.com", 28, "5 years", "123-456-7890", "USA", "Active", "Male", <a href="#">Edit</a>],
-  ["Jane", "Smith", "jane.smith@example.com", 32, "8 years", "987-654-3210", "Canada", "Inactive", "Female", <a href="#">Edit</a>],
-  ["Michael", "Brown", "michael.brown@example.com", 40, "15 years", "456-789-0123", "UK", "Active", "Male", <a href="#">Edit</a>],
-  ["Emily", "Johnson", "emily.johnson@example.com", 25, "3 years", "321-654-9870", "Australia", "Active", "Female", <a href="#">Edit</a>],
-  ["Daniel", "Williams", "daniel.williams@example.com", 35, "10 years", "654-321-0987", "Germany", "Inactive", "Male", <a href="#">Edit</a>]
-];
+  // Fetch Data on Component Mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await FarmerService.getOnlineDataTest();
+        if (response && response.data) {
+          const formattedData = response.data.map((user) => [
+            user.id,
+            user.email,
+            user.first_name,
+            user.last_name,
+            <img key={user.id} src={user.avatar} alt="Avatar" className="w-10 h-10 rounded-full" />,
+          ]);
+
+          setTableContent(formattedData);
+          setFilteredTableContent(formattedData); // Update both
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []); // Runs once when component mounts
+
+  // Handle Search
+  const handleSearch = (query) => {
+    if (!query) {
+      setFilteredTableContent(tableContent);
+      return;
+    }
+
+    const lowerQuery = query.toLowerCase();
+    const filteredContent = tableContent.filter((row) =>
+      row.some(
+        (cell) => typeof cell === "string" && cell.toString().toLowerCase().includes(lowerQuery)
+      )
+    );
+
+    setFilteredTableContent(filteredContent);
+  };
 
   return (
-    <main className="h-[200vh] bg-white rounded-2xl flex flex-col gap-4 shadow-lg p-4">
-    {/* Header */}
-     <header className="flex items-center justify-between">
-     <h1 className="text-2xl font-semibold mb-4">Manage Farmer</h1>
-      <ModalComponent btnType={1}  btnIcon={<FiPlus className="mr-2 h-5 w-5"/>} text="Add Farmer" header = "Add Farmer" >
-        <AddFarmer/>
-      </ModalComponent>
-     </header>
+    <main className="h-fit min-h-[100vh] bg-white rounded-2xl flex flex-col gap-4 shadow-lg p-4">
+      {/* Header */}
+      <header className="flex items-center justify-between">
+        <h1 className="text-base md:text-2xl font-semibold mb-4">Manage Farmer</h1>
+        <ModalComponent btnType={1} btnIcon={<FiPlus className="mr-2 h-5 w-5" />} text="Add Farmer" header="Add Farmer">
+          <AddFarmer />
+        </ModalComponent>
+      </header>
 
-    {/* Table side */}
-    <Card>
-    <TableComponent tableHeadings={tableHeadings} tableContent={tableContent} />
-    </Card>
+      {/* Summary Cards */}
+      <article className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <Card className="w-full h-32" />
+        <Card className="w-full h-32" />
+        <Card className="w-full h-32" />
+        <Card className="w-full h-32" />
+      </article>
+
+      {/* Table Section */}
+      <Card>
+        <SearchBar onSearch={handleSearch} placeholder="Search by name, email, etc." />
+        <TableComponent tableHeadings={tableHeadings} tableContent={filteredTableContent} />
+      </Card>
     </main>
-  )
+  );
 }
 
-export default ManageFarmer
+export default ManageFarmer;

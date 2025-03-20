@@ -22,6 +22,16 @@ const FarmerService = {
             return null;
         }
     },
+      // Fetch all farmers
+      getOnlineDataTest: async () => {
+        try {
+            const response = await axios.get("https://reqres.in/api/users");
+            return response.data || null;
+        } catch (error) {
+            console.error("getOnlineDataTest Error:", error);
+            return null;
+        }
+    },
 }
 
 export default FarmerService;
