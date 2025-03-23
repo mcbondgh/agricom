@@ -1,10 +1,11 @@
 class FarmersDto {
     farmer_Id
+    first_name
     surname
     lastname
     gender
     age
-    contract_details
+    contact_details
     residential_address
     farming_experience
     educational_level
@@ -14,15 +15,16 @@ class FarmersDto {
     is_deleted
     date_created
     farm_association_memb
-    constructor(farmer_Id, surname, lastname, gender, age,
-        contract_details, residential_address,
+    constructor(farmer_Id,first_name, surname, lastname, gender, age,
+        contact_details, residential_address,
         farming_experience, educational_level, farm_gps_cordinate, login_id, is_active, is_deleted, date_created, farm_association_memb) {
         this.farmer_Id = farmer_Id
+        this.first_name=first_name
         this.surname = surname
         this.lastname = lastname
         this.gender = gender
         this.age = age
-        this.contract_details = contract_details
+        this.contact_details = contact_details
         this.educational_level = educational_level
         this.farm_gps_cordinate = farm_gps_cordinate
         this.farming_experience = farming_experience
@@ -35,6 +37,12 @@ class FarmersDto {
     }
     getFarmerId() {
         return this.farmer_Id
+    }
+    getFirstName(){
+        return this.first_name
+    }
+    setFirstName(first_name){
+        this.first_name=first_name
     }
     setFrmerID(farmerId) {
         this.farmer_Id = farmerId
@@ -63,11 +71,11 @@ class FarmersDto {
     setAge(age) {
         this.age = age
     }
-    getContract_details() {
-        return this.contract_details
+    getcontact_details() {
+        return this.contact_details
     }
-    setContract_details(contract_details) {
-        this.contract_details = contract_details
+    setcontact_details(contact_details) {
+        this.contact_details = contact_details
     }
     getEducational_level() {
         return this.educational_level

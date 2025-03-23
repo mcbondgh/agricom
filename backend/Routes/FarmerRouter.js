@@ -1,8 +1,9 @@
 const express=require('express')
-const {updateMiddleware,validateFarmerInput,deleteFarmerMiddleware}=require('../MiddleWares/FarmerMiddleWare')
+const {updateMiddleware,validateFarmerInput,deleteFarmerMiddleware,validateFarmInfo,validateYieldInfo}=require('../MiddleWares/FarmerMiddleWare')
 const FarmerController=require('../Controllers/FarmerController')
 const farmerRouter=express.Router()
-farmerRouter.post("/agricomfarms/agrocom/registerfarmer",validateFarmerInput,(req,res)=>{
+farmerRouter.post("/agricomfarms/agrocom/registerfarmer",validateFarmerInput,validateFarmInfo,validateYieldInfo,(req,res)=>{
+    console.log({msg:"created"})
     res.send({msg:`created`})
 })
 farmerRouter.post("/agricomfarms/agrocom/updatefarmers/:farmer_Id",updateMiddleware,(req,res)=>{ 

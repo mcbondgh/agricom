@@ -9,21 +9,42 @@ class FarmerController{
     async saveFarmerInformation(farmerDto){
      try{
       const connection=await db.getConnection()
-      await connection.execute(`INSERT INTO FARMER(FARMER_ID,SURNAME,LAST_NAME,
+      await connection.execute(`INSERT INTO FARMER(FARMER_ID,firstName,SURNAME,LAST_NAME,
         GENDER,AGE,CONTACT_DETAILS
         ,RESIDENTIAL_ADDRESS,FARMING_EXPERIENCE,EDUCATION_LEVEL,FARM_GPS_CORDINATES,
-        FARM_ASSOCIATION_MEMB,LOGIN_ID,IS_ACTIVE,IS_DELETED,DATE_CREATED)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-       [farmerDto.getFarmerId(),farmerDto.getSurname(),farmerDto.getLastname(),farmerDto.getGender(),
-        farmerDto. getAge(),farmerDto.getContract_details(),farmerDto.getResidential_address(),farmerDto.getFarming_experience(),
+        FARM_ASSOCIATION_MEMB,LOGIN_ID,IS_ACTIVE,IS_DELETED,DATE_CREATED)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+       [farmerDto.getFarmerId(),farmerDto.getFirstName(),farmerDto.getSurname(),farmerDto.getLastname(),farmerDto.getGender(),
+        farmerDto. getAge(),farmerDto.getcontact_details(),farmerDto.getResidential_address(),farmerDto.getFarming_experience(),
         farmerDto.getEducational_level(),farmerDto.getFarm_gps_cordinate(),farmerDto.getFarm_association_memb(),farmerDto. getLogin_id(),
         farmerDto.getIs_active(),farmerDto.getIs_deleted(),farmerDto.getDate_created()
        ])
-    
-      connection.end()
      }catch(err){
       throw new Error(err) 
      }
   
+    }
+    async saveFarmInformation(farmInfoDto){
+      try{
+         const connection=await db.getConnection()
+         await connection.execute(`INSERT INTO farm(FARM_ID, LAND_SIZE, FARM_LOCATION, CROP_TYPE, SOIL_TYPE, 
+          FARMING_PRACTICE, MECHANIZATION, FARMER_ID)VALUES(?,?,?,?,?,?,?,?)`,
+          [farmInfoDto.getFarm_id(),farmInfoDto.getLand_size(),farmInfoDto.getFarm_location(),farmInfoDto.getCrop_type(),
+            farmInfoDto.getSoil_type(),farmInfoDto.getFarming_practice(),farmInfoDto.getMechanization(),farmInfoDto.getFarmer_id()
+          ])
+      }catch(err){
+        throw new Error(err)
+      }
+    }
+    async saveYieldInfo(yieldInfo){
+     try{
+        const connection=await db.getConnection()
+        await connection.execute(`INSERT INTO yield(YIELD_ID,HARVEST_DATE,YIELD_PER_ACRE,MARKET_PRICES,REVENUE,FARM_ID)VALUES(?,?,?,?,?,?)`,
+          [yieldInfo.getYield_id(),yieldInfo.getHarvest_date(),yieldInfo.getYield_per_acre(),yieldInfo.getMarket_prices(),
+            yieldInfo.getRevenue(),yieldInfo.getFarm_id()]
+        )
+     }catch(err){
+      throw new Error(err)
+     }
     }
     async getAllFarmers(){
       const allFarmers=[]
@@ -36,7 +57,7 @@ class FarmerController{
       farmersDto.setGender(farmer.GENDER)
       farmersDto.setLastname(farmer.LAST_NAME)
       farmersDto.setAge(farmer.AGE)
-      farmersDto.setContract_details(farmer.CONTACT_DETAILS)
+      farmersDto.setcontact_details(farmer.CONTACT_DETAILS)
       farmersDto.setResidential_address(farmer.RESIDENTIAL_ADDRESS)
       farmersDto.setFarming_experience(farmer.FARMING_EXPERIENCE)
       farmersDto.setEducational_level(farmer.EDUCATION_LEVEL)
@@ -51,7 +72,7 @@ class FarmerController{
       const connection=await db.getConnection()
         await connection.execute(`update farmer set AGE=?,RESIDENTIAL_ADDRESS=?,
           CONTACT_DETAILS=?,FARMING_EXPERIENCE=?,EDUCATION_LEVEL=?,FARM_GPS_CORDINATES=?,FARM_ASSOCIATION_MEMB=? where FARMER_ID=?` 
-          ,[farmerUpdate.getAge(),farmerUpdate.getResidential_address(),farmerUpdate.getContract_details()
+          ,[farmerUpdate.getAge(),farmerUpdate.getResidential_address(),farmerUpdate.getcontact_details()
             ,farmerUpdate.getFarming_experience(),farmerUpdate.getEducational_level(),
             farmerUpdate.getFarm_gps_cordinate(),farmerUpdate.getFarm_association_memb(),farmerUpdate.getFarmerId()])
      

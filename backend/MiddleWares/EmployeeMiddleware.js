@@ -30,8 +30,7 @@ async function validateEmployeeDateInput(req,res,next) {
             const {error}=employeeShema.validate(req.body)
             if(error){
                 return res.send({msg:error.details[0].message})
-            }else{
-                
+            }else{ 
                 const employmentdate=moment(req.body.date_of_employment,"YYYY-MM-DD")
               employeeController.saveEmployeeDetails(new EmployeeDataDto(req.body.EMPLOYEE_id,req.body.first_name,req.body.last_name,
                 req.body.other_name,req.body.email_address,req.body.digital_address,req.body.gender,req.body.mobile_numbe,
