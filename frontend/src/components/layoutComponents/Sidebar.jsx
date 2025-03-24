@@ -49,7 +49,7 @@ export function SidebarComponent({menuIsOpen}) {
       <Sidebar aria-label="Sidebar with multi-level dropdown example " theme={CustomTheme.themeSidebar} >
       <Sidebar.Items>
         <Sidebar.ItemGroup>
-          <Sidebar.Item href="/" icon={HiChartPie}>
+          <Sidebar.Item href="/dashboard" icon={HiChartPie}>
             {isHovered || menuIsOpen ? "Dashboard": undefined}
           </Sidebar.Item>
           <Sidebar.Collapse open={openCollapse === 'notification'} onClick={() => handleCollapseClick('notification')} icon={HiBell} label={isHovered || menuIsOpen ? "Notification" : undefined}>
