@@ -45,7 +45,7 @@ const AppRoutes = () => (
     <Route path="/login" element = {<Login/>} />
       <Route element={<ProtectedRoutes/>}>
         <Route path="/" element={ <MainLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           {/* NOTIFICATION ROUTES */}
           <Route path="/audit-trails" element={<AuditAndTrails />} />

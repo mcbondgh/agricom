@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {Stepper, Step, StepLabel} from '@mui/material'
 import FarmerInfo from './addFarmerComponents/FarmerInfo';
@@ -6,17 +6,30 @@ import FarmLandInfo from './addFarmerComponents/FarmLandInfo';
 import FarmYieldInfo from './addFarmerComponents/FarmYieldInfo';
 import { Button } from 'flowbite-react';
 import FarmerService from '../../../../services/farmerService';
+import { ErrorAlert,SuccessAlert } from '@/utils/Alerts';
+
+
 function AddFarmer() {
     const [formData, setFormData] = useState({})
     const [activeStep, setActiveStep] = useState(0);
+     // Create validation reference for inputs
+    const validateRef = useRef(null);
      //navigate  
-     const navigate = useNavigate();
+    const navigate = useNavigate();
      //Function to handle farmer registration
     const handleFarmerRegistration = async() => {
+        //Calling validate function to check if all fields are filled
+        if (validateRef.current && !validateRef.current()) {
+            //Sweet Alert function  for errors 
+            ErrorAlert("Error!", "Fill all required fields!")
+            return;
+        }
         console.log("--Form submitted--|| ", formData)
         const response = await FarmerService.registerFarmer(formData);
         if (response.success) {
-            //
+            //SweetAlert function for successful save
+            SuccessAlert("Farmer registered successfully!")
+            
             navigate("/manage-farmer")
         }else {
             console.log("Error")
@@ -29,6 +42,13 @@ function AddFarmer() {
             setFormData((previousData)=> ({...previousData, ...newData}))
     }
     const handleNext = () => {
+        //Calling validate function to check if all fields are filled
+        if (validateRef.current && !validateRef.current()) {
+            //Sweet Alert function  for errors 
+            ErrorAlert("Error!", "Fill all required fields!")
+            return;
+        }
+        //Active step increment
         if (activeStep < 2)
         setActiveStep((currentStep) => currentStep + 1);
     }
@@ -51,9 +71,9 @@ function AddFarmer() {
             </Step>
         </Stepper>
         <div className='bg-gray-200 w-full h-fit p-8 rounded-lg mt-5'>
-            {activeStep === 0 && <FarmerInfo formData={formData} updateFormData={updateFormData}/>}
-            {activeStep === 1 && <FarmLandInfo formData={formData} updateFormData={updateFormData}/>}
-            {activeStep === 2 && <FarmYieldInfo formData={formData} updateFormData={updateFormData}/>}
+            {activeStep === 0 && <FarmerInfo formData={formData} updateFormData={updateFormData} validateRef={validateRef}/>}
+            {activeStep === 1 && <FarmLandInfo formData={formData} updateFormData={updateFormData} validateRef={validateRef}/>}
+            {activeStep === 2 && <FarmYieldInfo formData={formData} updateFormData={updateFormData } validateRef={validateRef}/>}
         </div>
         <div className='flex justify-between p-5'>
             <Button gradientMonochrome="success" disabled = {activeStep === 0} onClick={handlePrevious}>Previous</Button>

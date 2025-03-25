@@ -1,76 +1,130 @@
 import PropType from "prop-types";
 import { Label, TextInput, Select } from "flowbite-react";
+import { useState, useEffect } from "react";
+import { validateForm, allowNumbersOnly , allowTextOnly} from "@/utils/validateForm";
 
-function FarmerInfo({formData, updateFormData }) {
+
+
+function FarmerInfo({formData, updateFormData, validateRef }) {
+  // Initialize an empty object to store errors
+  const [errors, setErrors] = useState({});
+  useEffect(() => {
+    if (validateRef) {
+      validateRef.current = () => validateForm(requiredFields, formData, setErrors);
+    }
+  });
+
+  const requiredFields = [
+    "first_name", "surname", "gender", "age",
+    "contact_details", "residential_address",
+    "farming_experience", "education_level",
+    "farm_gps_coordinates", "farm_association_memb"
+  ];
+  
+  //Handing the changes in input fields
   const handleChange = (e) => {
-    updateFormData({ [e.target.name]: e.target.value });
+    const {name, value} = e.target;
+    updateFormData({[name]:value});
+    // Remove error when field is filled
+    setErrors((prev) => ({ ...prev, [name]: value.trim() ? "" : prev[name] }));
   };
+
 
   return (
     <main className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
         <div>
-          <Label htmlFor="first_name" value="First Name" />
-          <TextInput id="first_name"  value={formData.first_name || ""} name="first_name" onChange={handleChange} />
+          <span className="flex gap-1">
+          <Label htmlFor="first_name" value="First Name" /><span className="text-red-500 ml-1">*</span>
+          </span>
+          <TextInput onKeyDown={allowTextOnly} id="first_name"  value={formData.first_name || ""} name="first_name" onChange={handleChange} className={errors.first_name ? "border-red-500" : ""} />
+          {errors.first_name && <p className="text-red-500 text-sm">{errors.first_name}</p>}
         </div>
         <div>
-          <Label htmlFor="surname" value="Surname" />
-          <TextInput id="surname" value={formData.surname || ""} name="surname" onChange={handleChange} />
+          <span className="flex gap-1">
+          <Label htmlFor="surname" value="Surname" /><span className="text-red-500 ml-1">*</span>
+          </span>
+          <TextInput onKeyDown={allowTextOnly} id="surname" value={formData.surname || ""} name="surname" onChange={handleChange} className={errors.surname ? "border-red-500" : ""}  />
+          {errors.surname && <p className="text-red-500 text-sm">{errors.surname}</p>}
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
         <div>
           <Label htmlFor="last_name" value="Last Name" />
-          <TextInput id="last_name" value={formData.last_name || ""} name="last_name" onChange={handleChange} />
+          <TextInput onKeyDown={allowTextOnly} id="last_name" value={formData.last_name || ""} name="last_name" onChange={handleChange} />
         </div>
         <div>
-          <Label htmlFor="gender" value="Gender" />
-          <Select id="gender" name="gender" value={formData.gender || ""} onChange={handleChange}>
+          <span className="flex gap-1">
+          <Label htmlFor="gender" value="Gender" /><span className="text-red-500 ml-1">*</span>
+          </span>
+          <Select id="gender" name="gender" value={formData.gender || ""} onChange={handleChange} className={errors.gender ? "border-red-500" : ""} >
             <option value="">Select gender</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
             <option value="other">Other</option>
           </Select>
+          {errors.gender && <p className="text-red-500 text-sm">{errors.gender}</p>}
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
         <div>
-          <Label htmlFor="age" value="Age" />
-          <TextInput id="age" name="age" min={0} value={formData.age || ""} type="number" onChange={handleChange} />
+          <span className="flex gap-1">
+          <Label htmlFor="age" value="Age" /><span className="text-red-500 ml-1">*</span>
+          </span>
+          <TextInput id="age" name="age" min={0} value={formData.age || ""} type="number" onChange={handleChange} className={errors.age ? "border-red-500" : ""} />
+          {errors.age && <p className="text-red-500 text-sm">{errors.age}</p>}
         </div>
         <div>
-          <Label htmlFor="contact_details" value="Contact Details" />
-          <TextInput id="contact_details"value={formData.contact_details || ""}  name="contact_details" onChange={handleChange} />
+          <span className="flex gap-1">
+          <Label htmlFor="contact_details" value="Contact Details" /><span className="text-red-500 ml-1">*</span>
+          </span>
+          <TextInput onKeyDown={allowNumbersOnly} id="contact_details"value={formData.contact_details || ""}  name="contact_details" onChange={handleChange} className={errors.contact_details ? "border-red-500" : ""}/>
+          {errors.contact_details && <p className="text-red-500 text-sm">{errors.contact_details}</p>}
         </div>
       </div>
       <div>
-        <Label htmlFor="residential_address" value="Residential Address" />
-        <TextInput id="residential_address" name="residential_address" value={formData.residential_address || ""} onChange={handleChange} />
+        <span className="flex gap-1">
+        <Label htmlFor="residential_address" value="Residential Address" /><span className="text-red-500 ml-1">*</span>
+        </span>
+        <TextInput id="residential_address" name="residential_address" value={formData.residential_address || ""} onChange={handleChange} className={errors.residential_address ? "border-red-500" : ""} />
+        {errors.residential_address && <p className="text-red-500 text-sm">{errors.residential_address}</p>}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
         <div>
-          <Label htmlFor="farming_experience" value="Farming Experience (years)" />
-          <TextInput min={0} id="farming_experience" name="farming_experience" value={formData.farming_experience || ""} type="number" onChange={handleChange} />
+          <span className="flex gap-1">
+          <Label htmlFor="farming_experience" value="Farming Experience (years)" /><span className="text-red-500 ml-1">*</span>
+          </span>
+          <TextInput min={0} id="farming_experience" name="farming_experience" value={formData.farming_experience || ""} type="number" onChange={handleChange} className={errors.farming_experience ? "border-red-500" : ""}/>
+          {errors.farming_experience && <p className="text-red-500 text-sm">{errors.farming_experience}</p>}
         </div>
         <div>
-          <Label htmlFor="education_level" value="Education Level" />
-          <Select id="education_level" name="education_level" value={formData.education_level || ""} onChange={handleChange}>
+          <span className="flex gap-1">
+          <Label htmlFor="education_level" value="Education Level" /><span className="text-red-500 ml-1">*</span>
+          </span>
+          <Select id="education_level" name="education_level" value={formData.education_level || ""} onChange={handleChange}className={errors.education_level ? "border-red-500" : ""}>
             <option value="">Select education level</option>
             <option value="primary">Primary</option>
             <option value="secondary">Secondary</option>
             <option value="tertiary">Tertiary</option>
             <option value="other">Other</option>
           </Select>
+          {errors.education_level && <p className="text-red-500 text-sm">{errors.education_level}</p>}
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
         <div>
-          <Label htmlFor="farm_gps_coordinates" value="Farm GPS Coordinates" />
-          <TextInput id="farm_gps_coordinates" name="farm_gps_coordinates" value={formData.farm_gps_coordinates || ""} onChange={handleChange} />
+          <span className="flex gap-1">
+          <Label htmlFor="farm_gps_coordinates" value="Farm GPS Coordinates" /><span className="text-red-500 ml-1">*</span>
+          </span>
+          <TextInput id="farm_gps_coordinates" name="farm_gps_coordinates" value={formData.farm_gps_coordinates || ""} onChange={handleChange} className={errors.farm_gps_coordinates ? "border-red-500" : ""}/>
+          {errors.farm_gps_coordinates && <p className="text-red-500 text-sm">{errors.farm_gps_coordinates}</p>}
         </div>
         <div>
-          <Label htmlFor="farm_association_memb" value="Farm Association Membership" />
-          <TextInput id="farm_association_memb" name="farm_association_memb" value={formData.farm_association_memb || ""} onChange={handleChange} />
+          <span className="flex gap-1">
+          <Label htmlFor="farm_association_memb" value="Farm Association Membership" /><span className="text-red-500 ml-1">*</span>
+          </span>
+          <TextInput onKeyDown={allowTextOnly} id="farm_association_memb" name="farm_association_memb" value={formData.farm_association_memb || ""} onChange={handleChange} className={errors.farm_association_memb ? "border-red-500" : ""}/>
+          {errors.farm_association_memb && <p className="text-red-500 text-sm">{errors.farm_association_memb}</p>}
         </div>
       </div>
     </main>
@@ -83,4 +137,5 @@ export default FarmerInfo;
 FarmerInfo.propTypes = {
   updateFormData: PropType.func,
   formData: PropType.object,
+  validateRef: PropType.object,
 }
