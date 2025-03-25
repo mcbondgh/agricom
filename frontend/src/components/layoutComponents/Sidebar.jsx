@@ -1,13 +1,13 @@
 import PropTypes from "prop-types";
 import { Sidebar } from "flowbite-react";
-import { HiChartPie, HiBell, HiUser,HiMail, HiOutlineExclamationCircle} from "react-icons/hi";
+import { HiChartPie, HiBell, HiUser,HiMail} from "react-icons/hi";
 import { AiOutlineAudit } from "react-icons/ai";
 import { RiLandscapeFill } from "react-icons/ri";
 import { TbListDetails, TbActivity,TbMoneybag,TbUsersPlus,TbLogs,TbReport, TbReportMoney,TbCategoryPlus  } from "react-icons/tb";
 import { GiFarmer, GiFruitTree, GiCash, GiSettingsKnobs,GiTreeBranch, GiMasterOfArms} from "react-icons/gi"
 import { SiExpensify } from "react-icons/si";
 import { FaBoxes,FaHandHoldingUsd ,FaPeopleCarry, FaCloudSunRain } from "react-icons/fa";
-import { RiSecurePaymentLine } from "react-icons/ri";
+import { RiSecurePaymentLine,RiLogoutCircleLine  } from "react-icons/ri";
 import { MdOutlineManageAccounts,MdAccessibility } from "react-icons/md";
 import { PiFarm } from "react-icons/pi";
 import { GrSystem } from "react-icons/gr";
@@ -45,7 +45,9 @@ export function SidebarComponent({menuIsOpen}) {
       "Are sure you want to logout?", 
       //function to run after user confirms to logout
       ()=> {
-        console.log("Yes")
+        console.log("Yes, logout success")
+          //TODO: call logout Api
+          //TODO: Clear current use in context
         navigate("/login")
       })
   }
@@ -112,11 +114,7 @@ export function SidebarComponent({menuIsOpen}) {
           <Sidebar.Item icon = {(isHovered || menuIsOpen) && GrSystem } href="/system-params">{isHovered || menuIsOpen ? "System Parameters" : undefined}</Sidebar.Item>
           </Sidebar.Collapse>
           {/* Logout button */}
-          {/* <Alert triggerBtnText = "Logout" btnType={2} btnIcon={RiLogoutCircleLine}
-          triggerIcon = {<HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400" />}
-          message = "Are you sure you want to sign out?"
-          isHovered = {isHovered || menuIsOpen }/> */}
-          <Sidebar.Item onClick = {handleLogout} className = "cursor-pointer" icon = {(isHovered || menuIsOpen) && HiOutlineExclamationCircle }>{isHovered || menuIsOpen ? "Logout" : undefined}</Sidebar.Item>
+          <Sidebar.Item onClick = {handleLogout} className = "cursor-pointer" icon = {(isHovered || menuIsOpen) && RiLogoutCircleLine  }>{isHovered || menuIsOpen ? "Logout" : undefined}</Sidebar.Item>
         </Sidebar.ItemGroup>
       </Sidebar.Items>
     </Sidebar>

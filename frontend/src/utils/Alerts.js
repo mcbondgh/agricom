@@ -1,4 +1,6 @@
 import Swal from 'sweetalert2/dist/sweetalert2.all'
+const colorSuccess = "#009933"
+const colorDanger = "#e60000"
 
 export const ErrorAlert = (title, message,) => {
     Swal.fire({
@@ -6,7 +8,7 @@ export const ErrorAlert = (title, message,) => {
         text: message,
         icon: 'error',
         confirmButtonText: 'Okay',
-        confirmButtonColor: "#009933",
+        confirmButtonColor: colorDanger,
     })
 }
 
@@ -21,20 +23,20 @@ export const SuccessAlert = (message,) => {
     });
 }
 
-export const AlertWithResponse = (title,message,successFunction) => {
+export const AlertWithResponse = (title, message, logoutSuccessFunction) => {
     Swal.fire({
         icon: "question",
         title: title,
         text: message,
         showCancelButton: true,
         confirmButtonText: 'Yes',
-        confirmButtonColor: "#00802b",
+        confirmButtonColor: colorSuccess,
         cancelButtonText: 'Cancel',
-        cancelButtonColor: '#b30000',
+        cancelButtonColor: colorDanger,
     }).then(result =>{
         if (result.isConfirmed) {
             // 
-            successFunction();
+            logoutSuccessFunction();
         }
     })
 }
