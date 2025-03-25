@@ -29,7 +29,6 @@ function AddFarmer() {
         if (response.success) {
             //SweetAlert function for successful save
             SuccessAlert("Farmer registered successfully!")
-            
             navigate("/manage-farmer")
         }else {
             console.log("Error")
