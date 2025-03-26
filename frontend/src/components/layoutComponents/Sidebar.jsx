@@ -11,18 +11,19 @@ import { RiSecurePaymentLine,RiLogoutCircleLine  } from "react-icons/ri";
 import { MdOutlineManageAccounts,MdAccessibility } from "react-icons/md";
 import { PiFarm } from "react-icons/pi";
 import { GrSystem } from "react-icons/gr";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { motion } from "framer-motion";
 import CustomTheme from "../../themes/customThemes";
 import { AlertWithResponse } from "@/utils/Alerts";
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from "@/contextManager/context/AppContext";
+
 
 export function SidebarComponent({menuIsOpen}) {
- 
+ const {user, setUser} = useContext(UserContext)
   const [isHovered, setIsHovered] = useState(false)
   const [openCollapse, setOpenCollapse] = useState(null); // Track open collapse section
   const navigate = useNavigate();
-
   const handleMouseEnter = () => {
     if (menuIsOpen) {
       setIsHovered(false);
@@ -43,15 +44,18 @@ export function SidebarComponent({menuIsOpen}) {
     AlertWithResponse(
       "Logout", 
       "Are sure you want to logout?", 
-      //function to run after user confirms to logout
-      ()=> {
-        console.log("Yes, logout success")
-          //TODO: call logout Api
-          //TODO: Clear current use in context
-        navigate("/login")
-      })
-  }
-
+      () => {
+        console.log("Yes, logout success");
+        // TODO: Call logout API
+        setUser(null);
+        // Delay navigation slightly to ensure state update propagates
+        setTimeout(() => {
+          navigate("/login");
+        }, 0);
+      }
+    );
+  };
+  
   return (
     <motion.div
     onMouseEnter={handleMouseEnter}

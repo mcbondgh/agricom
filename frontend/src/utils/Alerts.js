@@ -23,7 +23,7 @@ export const SuccessAlert = (message,) => {
     });
 }
 
-export const AlertWithResponse = (title, message, logoutSuccessFunction) => {
+export const AlertWithResponse = (title, message, successFunction) => {
     Swal.fire({
         icon: "question",
         title: title,
@@ -36,7 +36,7 @@ export const AlertWithResponse = (title, message, logoutSuccessFunction) => {
     }).then(result =>{
         if (result.isConfirmed) {
             // 
-            logoutSuccessFunction();
+            successFunction();
         }
     })
 }

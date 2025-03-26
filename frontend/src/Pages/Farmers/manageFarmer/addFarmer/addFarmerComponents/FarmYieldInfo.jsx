@@ -12,7 +12,7 @@ function FarmYieldInfo({formData, updateFormData, validateRef }) {
   
   useEffect(()=>{
     if(validateRef) {
-      validateRef.current = () => validateForm(requiredFields, formData, setErrors);
+       validateRef.current = () => validateForm(requiredFields, formData, setErrors);
     }
 });
 
