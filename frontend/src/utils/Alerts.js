@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2/dist/sweetalert2.all'
-const colorSuccess = "#009933"
+const colorSuccess = "#046c4e"
 const colorDanger = "#e60000"
 
 export const ErrorAlert = (title, message,) => {

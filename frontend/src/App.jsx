@@ -1,15 +1,15 @@
 import { BrowserRouter as Router} from "react-router-dom";
 import { Flowbite} from "flowbite-react"
 import AppRoutes from "@/routes/AppRoutes";
-import { UserContextProvider } from "@/contextManager/contextProvider/UserContextProvider";
+import { AuthUserContextProvider } from "@/contextManager/contextProvider/AuthUserContextProvider";
 function App() {
  
   return (
     <Router>
        <Flowbite>
-        <UserContextProvider>
-        <AppRoutes/>
-        </UserContextProvider>
+        <AuthUserContextProvider>
+          <AppRoutes/>
+        </AuthUserContextProvider>
       </Flowbite>
     </Router>
   )

@@ -30,8 +30,26 @@ const AuthService  = {
             console.error("Logout Error:", error);
             return { success: false, message: "Server error" };
         }
+    },
+
+    // Fetch authenticated user (Check if user is logged in)
+    fetchUser: async () => {
+        try {
+            const response = await axios.get("http://localhost:200/agricom/auth/me", { withCredentials: true });
+            if (response.status === 200 && response.data.session.authenticated) {
+                return { success: true, user: response.data.session.user, authenticated: true };
+            } else {
+                return { success: false, user: null, authenticated: false };
+            }
+        } catch (error) {
+            console.error("Auth Check Error:", error);
+            return { success: false, user: null, authenticated: false };
+        }
     }
-                
+    
+    
+
+
 }
 
 export default AuthService;

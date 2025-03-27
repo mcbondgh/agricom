@@ -1,5 +1,5 @@
 // src/routes/AppRoutes.jsx
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate  } from "react-router-dom";
 import MainLayout from "@/Layouts/MainLayout";
 import Dashboard from "@/Pages/Dashboard/Dashboard";
 import Profile from "@/Pages/Profile/Profile";
@@ -43,9 +43,11 @@ import { ProtectedRoutes } from "./ProtectedRoutes";
 const AppRoutes = () => (
   <Routes>
     <Route path="/login" element = {<Login/>} />
+    {/* Redirect "/" to "/login" by default */}
+    <Route path="/" element={<Navigate to="/login" />} />
       <Route element={<ProtectedRoutes/>}>
         <Route path="/" element={ <MainLayout />}>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           {/* NOTIFICATION ROUTES */}
           <Route path="/audit-trails" element={<AuditAndTrails />} />

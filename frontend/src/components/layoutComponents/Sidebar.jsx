@@ -16,11 +16,11 @@ import { motion } from "framer-motion";
 import CustomTheme from "../../themes/customThemes";
 import { AlertWithResponse } from "@/utils/Alerts";
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from "@/contextManager/context/AppContext";
+import { AuthUserContext } from "@/contextManager/context/AppContext";
 
 
 export function SidebarComponent({menuIsOpen}) {
- const {user, setUser} = useContext(UserContext)
+ const {user, logoutDummy} = useContext(AuthUserContext)
   const [isHovered, setIsHovered] = useState(false)
   const [openCollapse, setOpenCollapse] = useState(null); // Track open collapse section
   const navigate = useNavigate();
@@ -31,7 +31,8 @@ export function SidebarComponent({menuIsOpen}) {
       setIsHovered(true);
     }
   }
-
+  console.log("User role", user.role)
+  console.log("User role", user.role === "admin")
   const handleMouseLeave = () => {
     setIsHovered(false);
     setOpenCollapse(null); // Collapse all items on mouse leave
@@ -47,7 +48,7 @@ export function SidebarComponent({menuIsOpen}) {
       () => {
         console.log("Yes, logout success");
         // TODO: Call logout API
-        setUser(null);
+        logoutDummy(); // Dummy logout function test
         // Delay navigation slightly to ensure state update propagates
         setTimeout(() => {
           navigate("/login");
@@ -66,7 +67,7 @@ export function SidebarComponent({menuIsOpen}) {
       <Sidebar aria-label="Sidebar with multi-level dropdown example " theme={CustomTheme.themeSidebar} >
       <Sidebar.Items>
         <Sidebar.ItemGroup>
-          <Sidebar.Item href="/" icon={HiChartPie}>
+          <Sidebar.Item href="/dashboard" icon={HiChartPie}>
             {isHovered || menuIsOpen ? "Dashboard": undefined}
           </Sidebar.Item>
           <Sidebar.Collapse open={openCollapse === 'notification'} onClick={() => handleCollapseClick('notification')} icon={HiBell} label={isHovered || menuIsOpen ? "Notification" : undefined}>

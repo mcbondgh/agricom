@@ -5,14 +5,15 @@ import {RiProfileLine, RiLogoutCircleLine,RiNotification2Line} from "react-icons
 import { BreadCrumpComponent } from "@/components/ui/Breadcrumb";
 import CustomTheme from "@/themes/customThemes";
 import { DrawerComponent } from "@/components/ui/Drawer";
-import { UserContext } from "@/contextManager/context/AppContext";
+import { AuthUserContext } from "@/contextManager/context/AppContext";
 import { AlertWithResponse } from "@/utils/Alerts";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function NavbarComponent() {
   //Getting user from userContext
-  const { user, setUser } = useContext(UserContext);
+  const { user, logoutDummy } = useContext(AuthUserContext);
+  console.log("User navbar-> ",user)
   //creating react router dom navigator 
   const navigate = useNavigate();
   //Function to handle logout
@@ -24,8 +25,10 @@ export function NavbarComponent() {
       ()=> {
         console.log("Yes, logout success")
           //TODO: call logout Api
-        setUser(null)
-        navigate("/login")
+        logoutDummy(); // this is a dummy logout test
+        setTimeout(() => {
+          navigate("/login");
+        }, 0);
       })
   }
   return (
