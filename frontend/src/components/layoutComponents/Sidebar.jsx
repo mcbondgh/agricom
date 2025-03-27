@@ -13,14 +13,14 @@ import { PiFarm } from "react-icons/pi";
 import { GrSystem } from "react-icons/gr";
 import { useState, useContext } from "react";
 import { motion } from "framer-motion";
-import CustomTheme from "../../themes/customThemes";
+import CustomTheme from "@/themes/customThemes";
 import { AlertWithResponse } from "@/utils/Alerts";
 import { useNavigate } from 'react-router-dom';
 import { AuthUserContext } from "@/contextManager/context/AppContext";
 
 
 export function SidebarComponent({menuIsOpen}) {
- const {user, logoutDummy} = useContext(AuthUserContext)
+ const {logoutDummy} = useContext(AuthUserContext)
   const [isHovered, setIsHovered] = useState(false)
   const [openCollapse, setOpenCollapse] = useState(null); // Track open collapse section
   const navigate = useNavigate();
@@ -31,8 +31,7 @@ export function SidebarComponent({menuIsOpen}) {
       setIsHovered(true);
     }
   }
-  console.log("User role", user.role)
-  console.log("User role", user.role === "admin")
+
   const handleMouseLeave = () => {
     setIsHovered(false);
     setOpenCollapse(null); // Collapse all items on mouse leave

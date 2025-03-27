@@ -1,13 +1,13 @@
 import PropTypes from "prop-types";
-import { AuthUserContext } from "../context/AppContext";
+import { AuthUserContext } from "@/contextManager/context/AppContext";
 import { useState,useEffect } from "react";
 import UserImg from "/user.jpg"
-import AuthService from "../../services/authService";
+import AuthService from "@/services/authService";
 
 export function AuthUserContextProvider({children}) {
     const dummyUser ={ 
         name: "David Benson",
-        email: "user@gmail",
+        email: "user@gmail.com",
         image: UserImg,
         role: "admin",
         password: "12345"
