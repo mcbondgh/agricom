@@ -31,7 +31,7 @@ function FarmerInfo({formData, updateFormData, validateRef }) {
 
   return (
     <main className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-16">
         <div>
           <span className="flex gap-1">
           <Label htmlFor="first_name" value="First Name" /><span className="text-red-500 ml-1">*</span>
@@ -47,10 +47,10 @@ function FarmerInfo({formData, updateFormData, validateRef }) {
           {errors.surname && <p className="text-red-500 text-sm">Surname is required</p>}
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-16">
         <div>
           <Label htmlFor="last_name" value="Last Name" />
-          <TextInput onKeyDown={allowTextOnly} id="last_name" value={formData.last_name || ""} name="last_name" onChange={handleChange} />
+          <TextInput color="success" onKeyDown={allowTextOnly} id="last_name" value={formData.last_name || ""} name="last_name" onChange={handleChange} />
         </div>
         <div>
           <span className="flex gap-1">
@@ -65,7 +65,7 @@ function FarmerInfo({formData, updateFormData, validateRef }) {
           {errors.gender && <p className="text-red-500 text-sm">Gender is required</p>}
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-16">
         <div>
           <span className="flex gap-1">
           <Label htmlFor="age" value="Age" /><span className="text-red-500 ml-1">*</span>
@@ -88,7 +88,7 @@ function FarmerInfo({formData, updateFormData, validateRef }) {
         <TextInput color={errors.residential_address ? "failure" : "success"} id="residential_address" name="residential_address" value={formData.residential_address || ""} onChange={handleChange}/>
         {errors.residential_address && <p className="text-red-500 text-sm">Residential address is required</p>}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-16">
         <div>
           <span className="flex gap-1">
           <Label htmlFor="farming_experience" value="Farming Experience (years)" /><span className="text-red-500 ml-1">*</span>
@@ -110,7 +110,7 @@ function FarmerInfo({formData, updateFormData, validateRef }) {
           {errors.education_level && <p className="text-red-500 text-sm">Education level is required</p>}
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-16">
         <div>
           <span className="flex gap-1">
           <Label htmlFor="farm_gps_coordinates" value="Farm GPS Coordinates" /><span className="text-red-500 ml-1">*</span>

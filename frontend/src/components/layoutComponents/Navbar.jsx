@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 export function NavbarComponent() {
   //Getting user from userContext
   const { user, logoutDummy } = useContext(AuthUserContext);
-  console.log("User navbar-> ",user)
   //creating react router dom navigator 
   const navigate = useNavigate();
   //Function to handle logout

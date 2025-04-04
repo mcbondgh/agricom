@@ -1,11 +1,13 @@
-import { Button, Card, FloatingLabel } from "flowbite-react";
-import IMG from "/agric_1.jpg";
-import IMG2 from "/agric_14.jpg";
+import { Card, FloatingLabel } from "flowbite-react";
+import IMG from "/agric_1.webp";
+import IMG2 from "/agric_14.webp";
 import { ImLeaf } from "react-icons/im";
-import { AuthUserContext } from "@/contextManager/context/AppContext";
 import { useState, useContext } from "react";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { FaSignInAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { AuthUserContext } from "@/contextManager/context/AppContext";
+import { PrimaryButtonsMd } from "@/components/ui/Buttons";
 
 export function Login() {
   const { login, loginDummy } = useContext(AuthUserContext);
@@ -86,10 +88,7 @@ export function Login() {
 
             {/* Error Message */}
             {error && <p className="text-red-600 text-center">{error}</p>}
-
-            <Button type="submit" className="w-full bg-gradient-to-r from-green-400 via-green-500 to-green-600 text-white hover:bg-gradient-to-br focus:ring-green-300 dark:focus:ring-green-800">
-              Login
-            </Button>
+             <PrimaryButtonsMd type = "submit" text="Login" btnIcon={<FaSignInAlt className="mr-2 h-5 w-5" />} />
           </form>
         </div>
       </Card>
