@@ -1,15 +1,17 @@
-import PropTypes from 'prop-types';
-import { Navigate, Outlet } from 'react-router-dom';
-import { useContext } from 'react';
-import { UserContext } from '../contextManager/context/AppContext';
+import { Navigate, Outlet } from "react-router-dom";
+import { useContext } from "react";
+import { AuthUserContext } from "../contextManager/context/AppContext";
+import PropTypes from "prop-types";
+import { Loader } from "@/components/ui/Loader";
 
 export function ProtectedRoutes() {
-    const { user, loading } = useContext(UserContext);
-
-    if (loading) return <p>Loading...</p>; // Show loading screen while checking
-    return user ? <Outlet /> : <Navigate to="/login" replace />;
+    const { loading, authenticated } = useContext(AuthUserContext);
+    if (loading) {
+        return (<Loader/>); 
+    }
+    return authenticated ? <Outlet /> : <Navigate to="/login" replace />;
 }
 
 ProtectedRoutes.propTypes = {
-    children: PropTypes.node
+    children: PropTypes.node,
 };

@@ -11,18 +11,19 @@ import { RiSecurePaymentLine,RiLogoutCircleLine  } from "react-icons/ri";
 import { MdOutlineManageAccounts,MdAccessibility } from "react-icons/md";
 import { PiFarm } from "react-icons/pi";
 import { GrSystem } from "react-icons/gr";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { motion } from "framer-motion";
-import CustomTheme from "../../themes/customThemes";
+import CustomTheme from "@/themes/customThemes";
 import { AlertWithResponse } from "@/utils/Alerts";
 import { useNavigate } from 'react-router-dom';
+import { AuthUserContext } from "@/contextManager/context/AppContext";
+
 
 export function SidebarComponent({menuIsOpen}) {
- 
+ const {logoutDummy} = useContext(AuthUserContext)
   const [isHovered, setIsHovered] = useState(false)
   const [openCollapse, setOpenCollapse] = useState(null); // Track open collapse section
   const navigate = useNavigate();
-
   const handleMouseEnter = () => {
     if (menuIsOpen) {
       setIsHovered(false);
@@ -43,15 +44,18 @@ export function SidebarComponent({menuIsOpen}) {
     AlertWithResponse(
       "Logout", 
       "Are sure you want to logout?", 
-      //function to run after user confirms to logout
-      ()=> {
-        console.log("Yes, logout success")
-          //TODO: call logout Api
-          //TODO: Clear current use in context
-        navigate("/login")
-      })
-  }
-
+      () => {
+        console.log("Yes, logout success");
+        // TODO: Call logout API
+        logoutDummy(); // Dummy logout function test
+        // Delay navigation slightly to ensure state update propagates
+        setTimeout(() => {
+          navigate("/login");
+        }, 0);
+      }
+    );
+  };
+  
   return (
     <motion.div
     onMouseEnter={handleMouseEnter}
@@ -62,7 +66,7 @@ export function SidebarComponent({menuIsOpen}) {
       <Sidebar aria-label="Sidebar with multi-level dropdown example " theme={CustomTheme.themeSidebar} >
       <Sidebar.Items>
         <Sidebar.ItemGroup>
-          <Sidebar.Item href="/" icon={HiChartPie}>
+          <Sidebar.Item href="/dashboard" icon={HiChartPie}>
             {isHovered || menuIsOpen ? "Dashboard": undefined}
           </Sidebar.Item>
           <Sidebar.Collapse open={openCollapse === 'notification'} onClick={() => handleCollapseClick('notification')} icon={HiBell} label={isHovered || menuIsOpen ? "Notification" : undefined}>
