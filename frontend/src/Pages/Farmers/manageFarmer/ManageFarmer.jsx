@@ -11,36 +11,20 @@ import { MdDeleteForever } from "react-icons/md";
 import { DangerButtons, PrimaryButtons } from "@/components/ui/Buttons";
 import { AlertWithResponse, SuccessAlert } from "@/utils/Alerts";
 
+//TEST DATA
+import {tableHeadings, tableContents } from "../../../utils/testData";
+
 function ManageFarmer() {
   //Modals
   const [isAddFarmerModalOpen, setIsAddFarmerModalOpen] = useState(false);
   const [isEditFarmerModalOpen, setIsEditFarmerModalOpen] = useState(false);
   const [selectedFarmer, setSelectedFarmer] = useState(null)
   const [tableContent, setTableContent] = useState([]);
-    // Function to handle row edit and pass the selected data
 
   // const tableHeadings = ["ID", "Email", "First Name", "Last Name", "Avatar"];
 
-  // State for fetched table content and filtered content
-  
-  //just for test
-  const tableHeadings = [
-    "ID", "Surname", "Last Name", "Gender", "Age", "Contact",
-    "Educational Level", "Farm GPS Coordinate", "Experience",
-    "Residential Address", "Login ID", "Created", "Association"
-  ];
-  const tableContents = [
-    ["F001", "Mensah", "Kwame", "Male", 45, "0541234567", "Secondary", "5.6037, -0.1870", 15, "Accra, Ghana", "kwame_mensah", "2024-03-15", "Yes"],
-    ["F002", "Adu", "Ama", "Female", 38, "0249876543", "Tertiary", "6.6732, -1.5693", 10, "Kumasi, Ghana", "ama_adu", "2023-12-10", "No"],
-    ["F003", "Owusu", "Kojo", "Male", 52, "0203344556", "Primary", "7.0924, -2.3945", 25, "Sunyani, Ghana", "kojo_owusu", "2022-07-21", "Yes"],
-    ["F004", "Boateng", "Yaw", "Male", 30, "0556789123", "Secondary", "5.8764, -0.2030", 8, "Cape Coast, Ghana", "yaw_boateng", "2024-01-05", "No"],
-    ["F005", "Opoku", "Mavis", "Female", 27, "0598765432", "Tertiary", "6.2345, -1.4523", 5, "Tamale, Ghana", "mavis_opoku", "2023-09-18", "Yes"],
-    ["F006", "Asante", "Joseph", "Male", 60, "0234567890", "None", "7.8765, -2.3456", 40, "Koforidua, Ghana", "joseph_asante", "2021-05-10", "Yes"],
-    ["F007", "Gyasi", "Akua", "Female", 35, "0265432189", "Secondary", "6.9876, -0.7654", 12, "Takoradi, Ghana", "akua_gyasi", "2022-11-25", "No"],
-    ["F008", "Kusi", "Daniel", "Male", 48, "0243210987", "Tertiary", "5.4321, -1.6789", 20, "Ho, Ghana", "daniel_kusi", "2023-06-14", "Yes"],
-    ["F009", "Nkrumah", "Efua", "Female", 41, "0298765412", "Primary", "7.6543, -0.8765", 18, "Bolgatanga, Ghana", "efua_nkrumah", "2024-02-28", "Yes"],
-    ["F010", "Dapaah", "Frank", "Male", 55, "0212345678", "None", "6.5432, -1.2345", 30, "Wa, Ghana", "frank_dapaah", "2022-08-09", "No"]
-  ];
+
+
   
 
   const handleEditClick = (farmer) => {
@@ -85,7 +69,7 @@ function ManageFarmer() {
     };
 
     fetchData();
-  }, []); // Runs once when component mounts
+  }, []); 
 
   return (
     <main className="h-fit min-h-[100vh] bg-white rounded-2xl flex flex-col gap-4 shadow-lg p-4">
