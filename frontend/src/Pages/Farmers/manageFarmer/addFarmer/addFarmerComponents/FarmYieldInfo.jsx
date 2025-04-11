@@ -14,6 +14,8 @@ function FarmYieldInfo({ formData, updateFormData, validateRef }) {
     }
   }, [formData, validateRef]);
 
+  // if (!formData) return null;
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     updateFormData({ [name]: value });
@@ -44,7 +46,7 @@ function FarmYieldInfo({ formData, updateFormData, validateRef }) {
             min={min}
             value={formData[id] ?? ""}
             onChange={handleChange}
-            color={errors[id] ? "failure" : undefined}
+            color={errors[id] ? "failure" : "success"}
           />
           {errors[id] && <p className="text-red-500 text-sm">{label} is required</p>}
         </div>

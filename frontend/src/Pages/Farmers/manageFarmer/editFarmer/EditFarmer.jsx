@@ -1,6 +1,8 @@
 import PropTypes from "prop-types";
-import { Label, TextInput, Select, Button } from "flowbite-react";
+import { Label, TextInput, Select } from "flowbite-react";
 import { useState,useEffect } from "react";
+import { GrDocumentUpdate } from "react-icons/gr";
+import { PrimaryButtons } from "@/components/ui/Buttons";
 
 export const EditFarmer = ({selectedFarmer}) => {
   const [formData, setFormData] = useState({
@@ -34,26 +36,26 @@ export const EditFarmer = ({selectedFarmer}) => {
       setFormData({
         id: selectedFarmer[0],
         first_name: selectedFarmer[1] || "",
-        surname: selectedFarmer[2] || "",
+        surname: selectedFarmer[4] || "",
         last_name: selectedFarmer[2] || "",
-        gender: selectedFarmer[3] || "",
-        age: selectedFarmer[4] || "",
-        contact_details: selectedFarmer[5] || "",
-        residential_address: selectedFarmer[9] || "",
-        farming_experience: selectedFarmer[8] || "",
-        education_level: selectedFarmer[6] || "",
-        farm_gps_coordinates: selectedFarmer[7] || "",
+        gender: selectedFarmer[5],
+        age: selectedFarmer[3] || "",
+        contact_details: selectedFarmer[6] || "",
+        residential_address: selectedFarmer[8] || "",
+        farming_experience: selectedFarmer[12] || "",
+        education_level: selectedFarmer[7] || "",
+        farm_gps_coordinates: selectedFarmer[13] || "",
         farm_association_memb: selectedFarmer[11] || "",
-        land_size: selectedFarmer[12] || "",
-        farm_location: selectedFarmer[13] || "",
-        crop_type: selectedFarmer[14] || "",
-        soil_type: selectedFarmer[12] || "",
-        farming_practice: selectedFarmer[16] || "",
-        mechanization: selectedFarmer[12] || "",
-        harvest_dates: selectedFarmer[11] || "",
-        yield_per_acre: selectedFarmer[8] || "",
-        market_prices: selectedFarmer[8] || "",
-        revenue: selectedFarmer[4] || "",
+        land_size: selectedFarmer[17] || "",
+        farm_location: selectedFarmer[10] || "",
+        crop_type: selectedFarmer[15] || "",
+        soil_type: selectedFarmer[21] || "",
+        farming_practice: selectedFarmer[14] || "",
+        mechanization: selectedFarmer[19] || "",
+        harvest_dates: selectedFarmer[16].split("T")[0],
+        yield_per_acre: selectedFarmer[22] || "",
+        market_prices: selectedFarmer[18] || "",
+        revenue: selectedFarmer[20] || "",
       });
     }
   }, [selectedFarmer]);
@@ -61,6 +63,11 @@ export const EditFarmer = ({selectedFarmer}) => {
   const handleChange = (e) => {
     const {name, value} = e.target
     setFormData({...formData,[name]:value})
+  }
+
+  const handleSubmit = () => {
+    // Call API to update farmer data
+    console.log(formData)
   }
 
   return (
@@ -103,33 +110,33 @@ export const EditFarmer = ({selectedFarmer}) => {
                   <span className="flex gap-1">
                   <Label htmlFor="age" value="Age" /><span className="text-red-500 ml-1">*</span>
                   </span>
-                  <TextInput color="success" id="age" name="age" min={0}  type="number"/>
+                  <TextInput color="success" id="age" name="age" min={0}  type="number" value={formData.age} onChange={handleChange}/>
                 </div>
                 <div>
                   <span className="flex gap-1">
                   <Label htmlFor="contact_details" value="Contact Details" /><span className="text-red-500 ml-1">*</span>
                   </span>
-                  <TextInput color="success" id="contact_details" name="contact_details" />
+                  <TextInput color="success" id="contact_details" name="contact_details" value={formData.contact_details} onChange={handleChange}/>
                 </div>
               </div>
               <div>
                 <span className="flex gap-1">
                 <Label htmlFor="residential_address" value="Residential Address" /><span className="text-red-500 ml-1">*</span>
                 </span>
-                <TextInput color="success" id="residential_address" name="residential_address" />
+                <TextInput color="success" id="residential_address" name="residential_address" value={formData.residential_address} onChange={handleChange}/>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-16">
                 <div>
                   <span className="flex gap-1">
                   <Label htmlFor="farming_experience" value="Farming Experience (years)" /><span className="text-red-500 ml-1">*</span>
                   </span>
-                  <TextInput color="success" min={0} id="farming_experience" name="farming_experience" type="number"/>
+                  <TextInput color="success" min={0} id="farming_experience" name="farming_experience" type="number" value={formData.farming_experience} onChange={handleChange}/>
                 </div>
                 <div>
                   <span className="flex gap-1">
                   <Label htmlFor="education_level" value="Education Level" /><span className="text-red-500 ml-1">*</span>
                   </span>
-                  <Select color="success" id="education_level" name="education_level">
+                  <Select color="success" id="education_level" name="education_level" value={formData.education_level} onChange={handleChange}>
                     <option value="">Select education level</option>
                     <option value="primary">Primary</option>
                     <option value="secondary">Secondary</option>
@@ -143,13 +150,13 @@ export const EditFarmer = ({selectedFarmer}) => {
                   <span className="flex gap-1">
                   <Label htmlFor="farm_gps_coordinates" value="Farm GPS Coordinates" /><span className="text-red-500 ml-1">*</span>
                   </span>
-                  <TextInput color="success" id="farm_gps_coordinates" name="farm_gps_coordinates"/>
+                  <TextInput color="success" id="farm_gps_coordinates" name="farm_gps_coordinates" value={formData.farm_gps_coordinates} onChange={handleChange}/>
                 </div>
                 <div>
                   <span className="flex gap-1">
                   <Label htmlFor="farm_association_memb" value="Farm Association Membership" /><span className="text-red-500 ml-1">*</span>
                   </span>
-                  <TextInput color="success" id="farm_association_memb" name="farm_association_memb"/>
+                  <TextInput color="success" id="farm_association_memb" name="farm_association_memb" value={formData.farm_association_memb} onChange={handleChange}/>
                 </div>
               </div>
               {/* LAND INFORMATION*/}
@@ -159,13 +166,13 @@ export const EditFarmer = ({selectedFarmer}) => {
                   <span className="flex gap-1">
                     <Label htmlFor="land_size" value="Land Size (acres)" /><span className="text-red-500 ml-1">*</span>
                   </span>
-                    <TextInput color="success" id="land_size" min={0} name="land_size"/>
+                    <TextInput color="success" id="land_size" min={0} name="land_size" type="number" value={formData.land_size} onChange={handleChange}/>
                 </div>
                 <div>
                   <span className="flex gap-1">
                     <Label htmlFor="farm_location" value="Farm Location" /><span className="text-red-500 ml-1">*</span>
                   </span>
-                  <TextInput color="success" id="farm_location" name="farm_location" type="text"/>
+                  <TextInput color="success" id="farm_location" name="farm_location" type="text" value={formData.farm_location} onChange={handleChange}/>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-16">
@@ -173,13 +180,13 @@ export const EditFarmer = ({selectedFarmer}) => {
                   <span className="flex gap-1">
                     <Label htmlFor="crop_type" value="Crop Type" /><span className="text-red-500 ml-1">*</span>
                   </span>
-                  <TextInput color="success" id="crop_type" name="crop_type" type="text"/>
+                  <TextInput color="success" id="crop_type" name="crop_type" type="text" value={formData.crop_type} onChange={handleChange}/>
                 </div>
                 <div>
                   <span className="flex gap-1">
                     <Label htmlFor="soil_type" value="Soil Type" /><span className="text-red-500 ml-1">*</span>
                   </span>
-                  <Select color="success" id="soil_type" name="soil_type">
+                  <Select color="success" id="soil_type" name="soil_type" value={formData.soil_type} onChange={handleChange}>
                     <option value="">Select soil type</option>
                     <option value="clay">Clay</option>
                     <option value="sandy">Sandy</option>
@@ -194,7 +201,7 @@ export const EditFarmer = ({selectedFarmer}) => {
                   <span className="flex gap-1">
                     <Label htmlFor="farming_practice" value="Farming Practice" /><span className="text-red-500 ml-1">*</span>
                   </span>
-                  <Select color="success" id="farming_practice" name="farming_practice">
+                  <Select color="success" id="farming_practice" name="farming_practice" value={formData.farming_practice} onChange={handleChange}>
                     <option value="">Select farming practice</option>
                     <option value="organic">Organic</option>
                     <option value="conventional">Conventional</option>
@@ -206,7 +213,7 @@ export const EditFarmer = ({selectedFarmer}) => {
                     <span className="flex gap-1">
                       <Label htmlFor="mechanization" value="Mechanization" /><span className="text-red-500 ml-1">*</span>
                     </span>
-                    <Select color = "success" id="mechanization" name="mechanization">
+                    <Select color = "success" id="mechanization" name="mechanization" value={formData.mechanization} onChange={handleChange}>
                       <option value="">Select mechanization level</option>
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
@@ -237,7 +244,11 @@ export const EditFarmer = ({selectedFarmer}) => {
                   </div>
                 </div>
             <div className="py-4 flex justify-end">
-              <Button gradientMonochrome="success">Update</Button>
+              <PrimaryButtons 
+                btnIcon ={<GrDocumentUpdate className="mr-2 h-5 w-5" />} 
+                text = "Update"
+                onClick={handleSubmit}
+                />
             </div>
     </main>
   )

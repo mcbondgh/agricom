@@ -77,7 +77,7 @@ function FarmerInfo({formData, updateFormData, validateRef }) {
           <span className="flex gap-1">
           <Label htmlFor="contact_details" value="Contact Details" /><span className="text-red-500 ml-1">*</span>
           </span>
-          <TextInput color={errors.contact_details ? "failure" : "success"} onKeyDown={allowNumbersOnly} id="contact_details"value={formData.contact_details || ""}  name="contact_details" onChange={handleChange}/>
+          <TextInput max={10} type="tel" color={errors.contact_details ? "failure" : "success"} onKeyDown={allowNumbersOnly} id="contact_details"value={formData.contact_details || ""}  name="contact_details" onChange={handleChange}/>
           {errors.contact_details && <p className="text-red-500 text-sm">Contact details is required</p>}
         </div>
       </div>

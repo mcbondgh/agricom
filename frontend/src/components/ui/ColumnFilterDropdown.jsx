@@ -5,7 +5,7 @@ import { IoFilter } from "react-icons/io5";
 
 export function ColumnFilterDropdown({ tableHeadings, visibleColumns, toggleColumnVisibility, toggleAllColumnsVisibility }) {
   return (
-    <Dropdown color="success" label={
+    <Dropdown  className="max-h-[15rem] md:max-h-[20rem] overflow-auto ml-10 md:ml-16" color="success" label={
       <div className="flex items-center gap-2">
         <IoFilter className="w-5 h-5" />
         <span className="hidden md:block">Filters</span>

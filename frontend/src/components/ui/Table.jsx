@@ -1,12 +1,15 @@
 import PropTypes from "prop-types";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Table, Checkbox, Button } from "flowbite-react";
-import { ColumnFilterDropdown } from "./ColumnFilterDropdown";
+import { LuPin, LuPinOff } from "react-icons/lu";
+import { ColumnFilterDropdown } from "@/components/ui/ColumnFilterDropdown";
 import SearchBar from "@/components/ui/SearchBar";
 import { DangerButtonsMd } from "@/components/ui/Buttons";
 import { MdDeleteSweep } from "react-icons/md";
+import AuthService from "@/services/authService";
 
 export function TableComponent({
+  table_id,
   tableHeadings = [],
   tableContent = [],
   deleteButton,
@@ -14,30 +17,43 @@ export function TableComponent({
   onEditClick,
   onDeleteClick,
 }) {
-  const [checkedRows, setCheckedRows] = useState([]);
+  const [checkedRows, setCheckedRows] = useState({});
   const [checkAll, setCheckAll] = useState(false);
   const [selectedRowsCount, setSelectedRowsCount] = useState(0);
-  const [visibleColumns, setVisibleColumns] = useState(() =>
-    tableHeadings.map(() => true)
-  );
+  const [visibleColumns, setVisibleColumns] = useState(() =>tableHeadings.map(() => true));
   const [filteredTableContent, setFilteredTableContent] = useState(tableContent);
   const [currentPage, setCurrentPage] = useState(1);
+  const [stickyRow, setStickyRow] = useState(() => {
+    const stored = localStorage.getItem("stickyHeader");
+    return stored === "true";
+  });
+  const [columnWidths, setColumnWidths] = useState(() => {
+    const saved = localStorage.getItem("columnWidths");
+    return saved ? JSON.parse(saved) : tableHeadings.map(() => 150);
+  });
   const rowsPerPage = 10;
-
-  // Resizable columns
-  const [columnWidths, setColumnWidths] = useState(
-    tableHeadings.map(() => 150)
-  );
   const tableRef = useRef(null);
   const resizeRef = useRef({ index: null, startX: 0 });
 
-  //Function for search
+  useEffect(() => {
+    localStorage.setItem("columnWidths", JSON.stringify(columnWidths));
+  }, [columnWidths]);
+
+  useEffect(() => {
+    setCheckedRows(new Array(tableContent.length).fill(false));
+    setFilteredTableContent(tableContent);
+  }, [tableContent]);
+
+  useEffect(() => {
+    const count = Object.values(checkedRows).filter(Boolean).length;
+    setSelectedRowsCount(count);
+  }, [checkedRows]);
+
   const handleSearch = (query) => {
     if (!query) {
       setFilteredTableContent(tableContent);
       return;
     }
-
     const lowerQuery = query.toLowerCase();
     const filtered = tableContent.filter((row) =>
       row.some(
@@ -45,17 +61,16 @@ export function TableComponent({
           typeof cell === "string" && cell.toLowerCase().includes(lowerQuery)
       )
     );
-
     setFilteredTableContent(filtered);
     setCurrentPage(1);
   };
- // function for toggling column filter visibility
+
   const toggleColumnVisibility = (index) => {
     const updated = [...visibleColumns];
     updated[index] = !updated[index];
     setVisibleColumns(updated);
   };
- // function for toggling all column filter visibility
+
   const toggleAllColumnsVisibility = () => {
     const newState = visibleColumns.every(Boolean)
       ? new Array(tableHeadings.length).fill(false)
@@ -63,48 +78,21 @@ export function TableComponent({
     setVisibleColumns(newState);
   };
 
-  useEffect(() => {
-    setCheckedRows(new Array(tableContent.length).fill(false));
-    setFilteredTableContent(tableContent);
-  }, [tableContent]);
-
-  //Use effect to determine the number of selected rows
-  useEffect(() => {
-    const selectedCount = checkedRows.filter(Boolean).length;
-    setSelectedRowsCount(selectedCount);
-  }, [checkedRows]);
-
-  const handleRowCheck = (index) => {
-    const updated = [...checkedRows];
-    updated[index] = !updated[index];
-    setCheckedRows(updated);
-    setCheckAll(updated.every(Boolean));
+  const handleRowCheck = (rowKey) => {
+    setCheckedRows((prev) => ({...prev,[rowKey]: !prev[rowKey],}));
   };
-  
-  // function for handling pagination
+
   const handleCheckAllChange = (e) => {
     const isChecked = e.target.checked;
     setCheckAll(isChecked);
-    const start = (currentPage - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    const updated = [...checkedRows];
-    for (let i = start; i < end && i < filteredTableContent.length; i++) {
-      updated[i] = isChecked;
-    }
-    setCheckedRows(updated);
+    const newChecked = { ...checkedRows };
+    paginatedContent.forEach((row) => {
+    newChecked[row[0]] = isChecked;
+  });
+
+  setCheckedRows(newChecked);
   };
-  
-  const totalPages = Math.ceil(filteredTableContent.length / rowsPerPage);
-  const paginatedContent = filteredTableContent.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
 
-  const visibleColumnIndexes = visibleColumns
-    .map((visible, index) => (visible ? index : null))
-    .filter((i) => i !== null);
-
-  //function to handel column resize  
   const handleColumnResizeStart = (e, index) => {
     resizeRef.current = { index, startX: e.clientX };
     document.addEventListener("mousemove", handleColumnResize);
@@ -129,6 +117,22 @@ export function TableComponent({
     document.removeEventListener("mouseup", stopColumnResize);
   };
 
+  const handleDeleteAll = async () => {
+    const result = await AuthService.fetchUser();
+    console.log(result);
+  };
+
+  const totalPages = Math.ceil(filteredTableContent.length / rowsPerPage);
+
+  const paginatedContent = useMemo(() => {
+    const start = (currentPage - 1) * rowsPerPage;
+    return filteredTableContent.slice(start, start + rowsPerPage);
+  }, [filteredTableContent, currentPage]);
+
+  const visibleColumnIndexes = visibleColumns
+    .map((visible, index) => (visible ? index : null))
+    .filter((i) => i !== null);
+
   return (
     <main>
       <div className="flex md:justify-between flex-col md:flex-row gap-4 my-4">
@@ -142,6 +146,7 @@ export function TableComponent({
           {selectedRowsCount > 1 && (
             <DangerButtonsMd
               text="Delete All"
+              onClick={handleDeleteAll}
               btnIcon={<MdDeleteSweep className="mr-2 h-5 w-5" />}
             />
           )}
@@ -153,7 +158,7 @@ export function TableComponent({
       </div>
 
       <div className="overflow-x-auto" ref={tableRef}>
-        <Table hoverable striped>
+        <Table hoverable striped id={table_id}>
           <Table.Head>
             <Table.HeadCell className="text-center bg-green-600 text-white border-r-[1px] border-gray-50">
               <Checkbox
@@ -166,33 +171,52 @@ export function TableComponent({
               visibleColumns[index] ? (
                 <Table.HeadCell
                   key={index}
-                  className="relative bg-green-600 text-white font-semibold text-center border-r-[1px] border-gray-50"
+                  className="relative bg-green-600 text-white font-semibold text-center whitespace-nowrap overflow-hidden overflow-ellipsis border-r-[1px] border-gray-50"
                   style={{
                     width: columnWidths[index],
                     maxWidth: columnWidths[index],
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
                   }}
                 >
                   <div className="flex justify-between items-center">
-                    <span
-                      title={heading}
-                      className="w-full overflow-hidden text-ellipsis"
-                    >
+                    <span title={heading} className="w-full overflow-hidden text-ellipsis">
                       {heading}
                     </span>
                     <div
                       className="absolute top-0 right-0 h-full w-2 cursor-col-resize z-10 hover:bg-green-400 transition-all"
                       onMouseDown={(e) => handleColumnResizeStart(e, index)}
-                      style={{ cursor: 'col-resize' }}
+                      onDoubleClick={() => {
+                        setColumnWidths((prev) => {
+                          const updated = [...prev];
+                          updated[index] = 150;
+                          return updated;
+                        });
+                      }}
                     />
                   </div>
                 </Table.HeadCell>
               ) : null
             )}
-            <Table.HeadCell className="text-center bg-green-600 text-white">
-              Action
+            <Table.HeadCell className={`text-center bg-green-600 text-white ${stickyRow ? 'sticky z-20 right-0 border-l-gray-50 shadow-xl' : ''}`}>
+              <span className="flex items-center justify-between">
+                Action
+                {stickyRow ? (
+                  <LuPin
+                    className="h-5 w-5 cursor-pointer"
+                    onClick={() => {
+                      setStickyRow(false);
+                      localStorage.setItem("stickyHeader", "false");
+                    }}
+                  />
+                ) : (
+                  <LuPinOff
+                    className="h-5 w-5 cursor-pointer"
+                    onClick={() => {
+                      setStickyRow(true);
+                      localStorage.setItem("stickyHeader", "true");
+                    }}
+                  />
+                )}
+              </span>
             </Table.HeadCell>
           </Table.Head>
 
@@ -202,29 +226,31 @@ export function TableComponent({
                 const actualIndex = (currentPage - 1) * rowsPerPage + index;
                 return (
                   <Table.Row key={actualIndex} className="bg-white text-base">
-                    <Table.Cell className="flex items-center justify-center">
+                    <Table.Cell>
                       <Checkbox
-                        checked={checkedRows[actualIndex] || false}
-                        onChange={() => handleRowCheck(actualIndex)}
+                        className="mb-1"
+                        checked={!!checkedRows[row[0]]}
+                        onChange={() => handleRowCheck(row[0])}
                         color="success"
                       />
                     </Table.Cell>
                     {visibleColumnIndexes.map((cellIndex) => (
                       <Table.Cell
-                        className="text-center"
+                        className="text-center overflow-hidden whitespace-nowrap overflow-ellipsis"
                         key={cellIndex}
                         style={{
                           width: columnWidths[cellIndex],
                           maxWidth: columnWidths[cellIndex],
-                          overflow: "hidden",
-                          whiteSpace: "nowrap",
-                          textOverflow: "ellipsis",
                         }}
                       >
                         {row[cellIndex]}
                       </Table.Cell>
                     ))}
-                    <Table.Cell>
+                    <Table.Cell
+                      className={`${
+                        stickyRow ? "sticky right-0 z-10 bg-white border-l-2 shadow-2xl" : ""
+                      }`}
+                    >
                       <div className="flex gap-2 items-center justify-center">
                         {React.cloneElement(deleteButton, {
                           onClick: () => onDeleteClick(row),
@@ -251,7 +277,6 @@ export function TableComponent({
         </Table>
       </div>
 
-      {/* Pagination controls */}
       {totalPages > 1 && (
         <div className="flex justify-between md:justify-end items-center gap-2 mt-4">
           <Button
@@ -267,9 +292,7 @@ export function TableComponent({
           <Button
             gradientMonochrome="success"
             disabled={currentPage === totalPages}
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           >
             Next
           </Button>
@@ -280,6 +303,7 @@ export function TableComponent({
 }
 
 TableComponent.propTypes = {
+  table_id: PropTypes.string,
   tableHeadings: PropTypes.arrayOf(PropTypes.string),
   tableContent: PropTypes.arrayOf(
     PropTypes.arrayOf(

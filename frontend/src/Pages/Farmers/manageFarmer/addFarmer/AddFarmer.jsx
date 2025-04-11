@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {Stepper, Step, StepLabel} from '@mui/material'
@@ -5,11 +6,11 @@ import FarmerInfo from './addFarmerComponents/FarmerInfo';
 import FarmLandInfo from './addFarmerComponents/FarmLandInfo';
 import FarmYieldInfo from './addFarmerComponents/FarmYieldInfo';
 import { Button } from 'flowbite-react';
-import FarmerService from '../../../../services/farmerService';
+import FarmerService from '@/services/farmerService';
 import { ErrorAlert,SuccessAlert } from '@/utils/Alerts';
 
 
-function AddFarmer() {
+function AddFarmer({setIsAddFarmerModalOpen, fetchData}) {
     const [formData, setFormData] = useState({})
     const [activeStep, setActiveStep] = useState(0);
      // Create validation reference for inputs
@@ -24,17 +25,19 @@ function AddFarmer() {
             ErrorAlert("Error!", "Fill all required fields!")
             return;
         }
-        console.log("--Form submitted--|| ", formData)
         const response = await FarmerService.registerFarmer(formData);
         if (response.success) {
             //SweetAlert function for successful save
-            SuccessAlert("Farmer registered successfully!")
+            setFormData({})
+            setIsAddFarmerModalOpen(false)
+            SuccessAlert(response.message)
+            fetchData()
             navigate("/manage-farmer")
         }else {
+            //SweetAlert function for errors
+            ErrorAlert("Error!", response.message)
             console.log("Error")
         }
-        //resetting form data after submission
-        setFormData(null)
     }
     //function to update form date when stepper changes
     const updateFormData = (newData)=> {
@@ -86,3 +89,8 @@ function AddFarmer() {
 }
 
 export default AddFarmer
+//SETTING THE PROPERTIES DATA TYPES
+AddFarmer.propTypes = {
+    setIsAddFarmerModalOpen: PropTypes.func.isRequired,
+    fetchData: PropTypes.func.isRequired,
+};
