@@ -1,7 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useContext } from "react";
-import { AuthUserContext } from "../contextManager/context/AppContext";
-import PropTypes from "prop-types";
+import { AuthUserContext } from "@/contextManager/context/AppContext";
 import { Loader } from "@/components/ui/Loader";
 
 export function ProtectedRoutes() {
@@ -11,7 +10,3 @@ export function ProtectedRoutes() {
     }
     return authenticated ? <Outlet /> : <Navigate to="/login" replace />;
 }
-
-ProtectedRoutes.propTypes = {
-    children: PropTypes.node,
-};

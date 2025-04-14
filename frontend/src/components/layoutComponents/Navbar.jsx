@@ -9,10 +9,11 @@ import { AuthUserContext } from "@/contextManager/context/AppContext";
 import { AlertWithResponse } from "@/utils/Alerts";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import UserImg from "/user.jpg"
 
 export function NavbarComponent() {
   //Getting user from userContext
-  const { user, logoutDummy } = useContext(AuthUserContext);
+  const { user, logout } = useContext(AuthUserContext);
   //creating react router dom navigator 
   const navigate = useNavigate();
   //Function to handle logout
@@ -23,8 +24,7 @@ export function NavbarComponent() {
       //function to run after user confirms to logout
       ()=> {
         console.log("Yes, logout success")
-          //TODO: call logout Api
-        logoutDummy(); // this is a dummy logout test
+        logout(); // this is a dummy logout test
         setTimeout(() => {
           navigate("/login");
         }, 0);
@@ -42,8 +42,8 @@ export function NavbarComponent() {
       </div>
       <div className="flex items-center gap-2 md:order-2">
         <div className="flex items-center gap-2">
-        <p className="md:block md:text-xl dark:text-white font-semibold hidden">{user.name}</p>
-        <Dropdown arrowIcon={true} inline label={<Avatar alt="User settings" img={user.image} rounded />}>
+        <p className="md:block md:text-xl dark:text-white font-semibold hidden">{user.fullname}</p>
+        <Dropdown arrowIcon={true} inline label={<Avatar alt="User settings" img={ user ? UserImg: null} rounded />}>
           <Dropdown.Item href="/profile" icon={RiProfileLine} >User Profile</Dropdown.Item>
           <Dropdown.Item href="/sms-messages" icon={RiNotification2Line}>Notification</Dropdown.Item>
           <Dropdown.Divider />

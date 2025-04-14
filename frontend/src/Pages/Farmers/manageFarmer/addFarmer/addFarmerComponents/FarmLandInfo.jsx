@@ -1,26 +1,20 @@
 import PropType from "prop-types";
 import { Label, TextInput, Select } from "flowbite-react";
-import { useState, useEffect } from "react";
-import { validateForm , allowTextOnly} from "@/utils/validateForm";
+import { allowTextOnly } from "@/utils/utilityFunction";
 
-function FarmLandInfo({ formData, updateFormData, validateRef }) {
-  // Initialize an empty object to store errors
-  const [errors, setErrors] = useState({});
-  
-  useEffect(()=> {
-    const requiredFields = [
-      "land_size", "farm_location", "crop_type","soil_type", "farming_practice", "mechanization"
-      ]
-    if (validateRef) {
-      validateRef.current = () =>  validateForm(requiredFields,formData, setErrors)
-    }
-  },[formData, validateRef])
-
+function FarmLandInfo({ formData, updateFormData, errors, setErrors }) {
+ //Handling the changes in input fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     updateFormData({ [name]:value });
     // Remove error when field is filled
-    setErrors((prev) => ({ ...prev, [name]: value.trim() ? "" : prev[name] }));
+    if(errors[name]) {
+      setErrors((prev)=> {
+        const newErrors = {...prev}
+        delete newErrors[name]
+        return newErrors
+      })
+    }
   };
 
   return (
@@ -30,21 +24,21 @@ function FarmLandInfo({ formData, updateFormData, validateRef }) {
         <Label htmlFor="land_size" value="Land Size (acres)" /><span className="text-red-500 ml-1">*</span>
         </span>
         <TextInput color={errors.land_size ? "failure" : "success"} id="land_size" min={0} name="land_size" value={formData.land_size || ""} type="number" onChange={handleChange} />
-        {errors.land_size && <p className="text-red-500 text-sm">Farmland size is required</p>}
+        {errors.land_size && <p className="text-red-500 text-sm">{errors.land_size[0]}</p>}
       </div>
       <div>
         <span className="flex gap-1">
         <Label htmlFor="farm_location" value="Farm Location" /><span className="text-red-500 ml-1">*</span>
         </span>
         <TextInput color={errors.farm_location ? "failure" : "success"} id="farm_location" name="farm_location" value={formData.farm_location || ""} type="text" onChange={handleChange} />
-        {errors.farm_location && <p className="text-red-500 text-sm">Farm location is required</p>}
+        {errors.farm_location && <p className="text-red-500 text-sm">{errors.farm_location[0]}</p>}
       </div>
       <div>
         <span className="flex gap-1">
         <Label htmlFor="crop_type" value="Crop Type" /><span className="text-red-500 ml-1">*</span>
         </span>
         <TextInput color={errors.crop_type ? "failure" : "success"} onKeyDown={allowTextOnly} id="crop_type" name="crop_type" value={formData.crop_type || ""} type="text" onChange={handleChange} />
-        {errors.crop_type && <p className="text-red-500 text-sm">Crop type is required</p>}
+        {errors.crop_type && <p className="text-red-500 text-sm">{errors.crop_type[0]}</p>}
       </div>
       <div>
         <span className="flex gap-1">
@@ -58,7 +52,7 @@ function FarmLandInfo({ formData, updateFormData, validateRef }) {
           <option value="loam">Loam</option>
           <option value="other">Other</option>
         </Select>
-        {errors.soil_type && <p className="text-red-500 text-sm">Soil type is required</p>}
+        {errors.soil_type && <p className="text-red-500 text-sm">{errors.soil_type[0]}</p>}
       </div>
       <div>
         <span className="flex gap-1">
@@ -71,7 +65,7 @@ function FarmLandInfo({ formData, updateFormData, validateRef }) {
           <option value="mixed">Mixed</option>
           <option value="other">Other</option>
         </Select>
-        {errors.farming_practice && <p className="text-red-500 text-sm">Farming practice is required</p>}
+        {errors.farming_practice && <p className="text-red-500 text-sm">{errors.farming_practice[0]}</p>}
       </div>
       <div>
         <span className="flex gap-1">
@@ -83,7 +77,7 @@ function FarmLandInfo({ formData, updateFormData, validateRef }) {
           <option value="medium">Medium</option>
           <option value="high">High</option>
         </Select>
-        {errors.mechanization && <p className="text-red-500 text-sm">Mechanization is required</p>}
+        {errors.mechanization && <p className="text-red-500 text-sm">{errors.mechanization[0]}</p>}
       </div>
     </main>
   );
@@ -94,5 +88,6 @@ export default FarmLandInfo;
 FarmLandInfo.propTypes = {
   updateFormData: PropType.func,
   formData: PropType.object,
-  validateRef: PropType.object,
+  errors: PropType.object,
+  setErrors: PropType.func,
 }

@@ -12,7 +12,7 @@ export const ErrorAlert = (title, message,) => {
     })
 }
 
-export const SuccessAlert = (message,) => {
+export const SuccessAlert = (message) => {
     Swal.fire({
         icon: 'success',
         position: "top-end",

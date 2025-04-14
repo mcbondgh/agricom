@@ -20,7 +20,7 @@ import { AuthUserContext } from "@/contextManager/context/AppContext";
 
 
 export function SidebarComponent({menuIsOpen}) {
- const {logoutDummy} = useContext(AuthUserContext)
+ const {logout} = useContext(AuthUserContext)
   const [isHovered, setIsHovered] = useState(false)
   const [openCollapse, setOpenCollapse] = useState(null); // Track open collapse section
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ export function SidebarComponent({menuIsOpen}) {
       () => {
         console.log("Yes, logout success");
         // TODO: Call logout API
-        logoutDummy(); // Dummy logout function test
+        logout(); // Dummy logout function test
         // Delay navigation slightly to ensure state update propagates
         setTimeout(() => {
           navigate("/login");
