@@ -1,4 +1,4 @@
-export const tableHeadings = [
+export const farmersTableHeading = [
     "ID", "Surname", "Last Name", "Gender", "Age", "Contact",
     "Educational Level", "Farm GPS Coordinate", "Experience",
     "Residential Address", "Login ID", "Created", "Association"

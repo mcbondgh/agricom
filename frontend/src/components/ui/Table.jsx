@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { Table, Checkbox, Button } from "flowbite-react";
+import { Table, Checkbox, Button, Select } from "flowbite-react";
 import { LuPin, LuPinOff } from "react-icons/lu";
 import { ColumnFilterDropdown } from "@/components/ui/ColumnFilterDropdown";
 import SearchBar from "@/components/ui/SearchBar";
@@ -31,7 +31,13 @@ export function TableComponent({
     const saved = localStorage.getItem("columnWidths");
     return saved ? JSON.parse(saved) : tableHeadings.map(() => 150);
   });
-  const rowsPerPage = 10;
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handlePerPageChange = (e) => {
+    const selectedPageNumber = Number(e.target.value);
+    setRowsPerPage(selectedPageNumber);
+  }
+  //Rows per page
   const tableRef = useRef(null);
   const resizeRef = useRef({ index: null, startX: 0 });
 
@@ -127,7 +133,7 @@ export function TableComponent({
   const paginatedContent = useMemo(() => {
     const start = (currentPage - 1) * rowsPerPage;
     return filteredTableContent.slice(start, start + rowsPerPage);
-  }, [filteredTableContent, currentPage]);
+  }, [filteredTableContent, currentPage, rowsPerPage]);
 
   const visibleColumnIndexes = visibleColumns
     .map((visible, index) => (visible ? index : null))
@@ -276,9 +282,15 @@ export function TableComponent({
           </Table.Body>
         </Table>
       </div>
-
-      {totalPages > 1 && (
+            {/* Buttom Rows  */}
         <div className="flex justify-between md:justify-end items-center gap-2 mt-4">
+          <Select color="success" name="gender" value={rowsPerPage} onChange={handlePerPageChange} >
+            <option value= {5}>5</option>
+            <option value={10}>10</option>
+            <option value={15}>15</option>
+            <option value={20}>20</option>
+            <option value={25}>25</option>
+          </Select>
           <Button
             gradientMonochrome="success"
             disabled={currentPage === 1}
@@ -297,7 +309,6 @@ export function TableComponent({
             Next
           </Button>
         </div>
-      )}
     </main>
   );
 }

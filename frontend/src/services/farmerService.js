@@ -14,7 +14,7 @@ const FarmerService = {
             console.error("Registration Error:", error);
             return { success: false, message: "Server error" };
         }
-    } ,
+    },
     // Fetch all farmers
     getAllFarmers: async () => {
         try {
@@ -32,24 +32,37 @@ const FarmerService = {
     },
     updateFarmer: async (farmerData) => {
         try {
-            const response = await axios.post("http://localhost:200/agricomfarms/agrocom/updatefarmer", farmerData)
+            const response = await axios.post("http://localhost:3001/agricom/farmers/update", farmerData)
             const data = response.data;
-            return data;
+            if (response.status === 200) {
+                return { success: true, farmer: data.farmer, message: data.message};
+              } else {
+                return { success: false, message: data.message || "update failed" };
+              }
         } catch (error) {
             console.error("Registration Error:", error);
             return { success: false, message: "Server error" };
         }
-    } ,
-      // Fetch all farmers
-      getOnlineDataTest: async () => {
+    },
+
+    deleteFarmer: async (id) => {
         try {
-            const response = await axios.get("https://reqres.in/api/users");
-            return response.data || null;
+            const response = await axios.delete(`http://localhost:3001/agricom/farmers/${id}`, {
+                withCredentials: true,
+            });
+            const data = response.data;
+            if (response.status === 200) {
+                return { success: true, message: data.message };
+            } else {
+                return { success: false, message: data.message || "Failed to delete farmer" };
+            }
         } catch (error) {
-            console.error("getOnlineDataTest Error:", error);
-            return null;
+            console.error("Delete Farmer Error:", error);
+            return { success: false, message: "Server error while deleting farmer" };
         }
     },
+
+    
 }
 
 export default FarmerService;

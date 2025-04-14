@@ -30,3 +30,15 @@ export const Capitalize = (str) => {
    });
    return [tableHeadings, ...selectedTableBody]
  }
+
+ export const allowNumbersOnly = (e) => {
+  if (!/[0-9]/.test(e.key) && e.key !== "Backspace" && e.key !== "ArrowLeft" && e.key !== "ArrowRight") {
+    e.preventDefault();
+  }
+}
+
+export const allowTextOnly = (e) => {
+  if (!/^[a-zA-Z\s]*$/.test(e.key) && e.key !== "Backspace") {
+    e.preventDefault();
+  }
+}

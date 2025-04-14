@@ -1,28 +1,18 @@
-import PropTypes from "prop-types";
+import PropType from "prop-types";
 import { Label, TextInput } from "flowbite-react";
-import { useState, useEffect } from "react";
-import { validateForm } from "@/utils/validateForm";
 
-function FarmYieldInfo({ formData, updateFormData, validateRef }) {
-  const [errors, setErrors] = useState({});
-  
-
-  useEffect(() => {
-    const requiredFields = ["harvest_dates", "yield_per_acre", "market_prices", "revenue"];
-    if (validateRef) {
-      validateRef.current = () => validateForm(requiredFields, formData, setErrors);
-    }
-  }, [formData, validateRef]);
-
-  // if (!formData) return null;
-
+function FarmYieldInfo({ formData, updateFormData, errors, setErrors }) {
+//Handling the changes in input fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     updateFormData({ [name]: value });
-
     // Remove error message when the user enters a valid value
-    if (errors[name]) {
-      setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+    if(errors[name]) {
+      setErrors((prev)=> {
+        const newErrors = {...prev}
+        delete newErrors[name]
+        return newErrors
+      })
     }
   };
 
@@ -48,7 +38,7 @@ function FarmYieldInfo({ formData, updateFormData, validateRef }) {
             onChange={handleChange}
             color={errors[id] ? "failure" : "success"}
           />
-          {errors[id] && <p className="text-red-500 text-sm">{label} is required</p>}
+          {errors[id] && <p className="text-red-500 text-sm">{errors[id][0]}</p>}
         </div>
       ))}
     </main>
@@ -56,9 +46,10 @@ function FarmYieldInfo({ formData, updateFormData, validateRef }) {
 }
 
 FarmYieldInfo.propTypes = {
-  updateFormData: PropTypes.func.isRequired,
-  formData: PropTypes.object.isRequired,
-  validateRef: PropTypes.object,
+  updateFormData: PropType.func.isRequired,
+  formData: PropType.object.isRequired,
+  errors: PropType.object,
+  setErrors: PropType.func,
 };
 
 export default FarmYieldInfo;

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {Stepper, Step, StepLabel} from '@mui/material'
 import FarmerInfo from './addFarmerComponents/FarmerInfo';
@@ -8,24 +8,32 @@ import FarmYieldInfo from './addFarmerComponents/FarmYieldInfo';
 import { Button } from 'flowbite-react';
 import FarmerService from '@/services/farmerService';
 import { ErrorAlert,SuccessAlert } from '@/utils/Alerts';
+import {farmerSchema, farmerInfoSchema, farmLandInfoSchema, yieldInfoSchema} from '@/schemas/farmerSchema';
 
 
 function AddFarmer({setIsAddFarmerModalOpen, fetchData}) {
     const [formData, setFormData] = useState({})
+    const [errors, setErrors] = useState({})
     const [activeStep, setActiveStep] = useState(0);
-     // Create validation reference for inputs
-    const validateRef = useRef(null);
+
      //navigate  
     const navigate = useNavigate();
      //Function to handle farmer registration
     const handleFarmerRegistration = async() => {
         //Calling validate function to check if all fields are filled
-        if (validateRef.current && !validateRef.current()) {
-            //Sweet Alert function  for errors 
-            ErrorAlert("Error!", "Fill all required fields!")
+        const result = farmerSchema.safeParse(formData);
+
+        if (!result.success) {
+            const fieldErrors = result.error.flatten().fieldErrors;
+            setErrors(fieldErrors);
+            ErrorAlert("Error!", "Fill all required fields before submitting!");
             return;
         }
-        const response = await FarmerService.registerFarmer(formData);
+
+        //clearing errors
+        setErrors({})
+
+        const response = await FarmerService.registerFarmer(result.data);
         if (response.success) {
             //SweetAlert function for successful save
             setFormData({})
@@ -43,13 +51,32 @@ function AddFarmer({setIsAddFarmerModalOpen, fetchData}) {
     const updateFormData = (newData)=> {
             setFormData((previousData)=> ({...previousData, ...newData}))
     }
+    //function to handle schemas for stepper change
+    const getSchemaForStep = (step) => {
+        switch (step) {
+          case 0:
+            return farmerInfoSchema;
+          case 1:
+            return farmLandInfoSchema;
+          case 2:
+            return yieldInfoSchema;
+          default:
+            return farmerSchema;
+        }
+    };
+
     const handleNext = () => {
         //Calling validate function to check if all fields are filled
-        if (validateRef.current && !validateRef.current()) {
-            //Sweet Alert function  for errors 
+        const currentSchema = getSchemaForStep(activeStep);
+        const result = currentSchema.safeParse(formData);
+        if (!result.success) {
+            const fieldErrors  = result.error.flatten().fieldErrors;
+            setErrors(fieldErrors)
             ErrorAlert("Error!", "Fill all required fields!")
             return;
         }
+        // clear previous errors
+        setErrors({}); 
         //Active step increment
         if (activeStep < 2)
         setActiveStep((currentStep) => currentStep + 1);
@@ -73,9 +100,9 @@ function AddFarmer({setIsAddFarmerModalOpen, fetchData}) {
             </Step>
         </Stepper>
         <div className='bg-gray-200 w-full h-fit p-8 rounded-lg mt-5'>
-            {activeStep === 0 && <FarmerInfo formData={formData} updateFormData={updateFormData} validateRef={validateRef}/>}
-            {activeStep === 1 && <FarmLandInfo formData={formData} updateFormData={updateFormData} validateRef={validateRef}/>}
-            {activeStep === 2 && <FarmYieldInfo formData={formData} updateFormData={updateFormData } validateRef={validateRef}/>}
+            {activeStep === 0 && <FarmerInfo formData={formData} updateFormData={updateFormData} errors={errors} setErrors={setErrors}/>}
+            {activeStep === 1 && <FarmLandInfo formData={formData} updateFormData={updateFormData} errors={errors} setErrors={setErrors}/>}
+            {activeStep === 2 && <FarmYieldInfo formData={formData} updateFormData={updateFormData } errors={errors} setErrors={setErrors}/>}
         </div>
         <div className='flex justify-between p-5'>
             <Button gradientMonochrome="success" disabled = {activeStep === 0} onClick={handlePrevious}>Previous</Button>

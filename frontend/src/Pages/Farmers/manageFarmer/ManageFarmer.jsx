@@ -15,47 +15,53 @@ import { IoIosPeople } from "react-icons/io";
 import { FaUserCheck, FaUsersSlash , FaMale ,FaFemale } from "react-icons/fa";
 import { GiFarmer } from "react-icons/gi";
 import { CiExport } from "react-icons/ci";
+import { farmersTableHeading } from "@/utils/ArraysData";
 //TEST DATA
-// import {tableHeadings, tableContents } from "@/utils/testData";
+// import {farmersTableHeading, tableContents } from "@/utils/testData";
 
 function ManageFarmer() {
   //Modals
   const [isAddFarmerModalOpen, setIsAddFarmerModalOpen] = useState(false);
   const [isEditFarmerModalOpen, setIsEditFarmerModalOpen] = useState(false);
+  //Selected farmer for edit
   const [selectedFarmer, setSelectedFarmer] = useState(null)
+  //Farmers data from api
   const [tableContent, setTableContent] = useState([]);
+  const [farmersData, setFarmersData] = useState([]);
+  //End
   const [totalFarmers, setTotalFarmers] = useState(0)
   const [totalActiveFarmers, setTotalActiveFarmers] = useState(0)
   const [totalMale, setTotalMale] = useState(0)
   const [totalFemale, setTotalFemale] = useState(0)
   const [totalInactiveFarmers, setTotalInactiveFarmers] = useState(0)
 
-  // const tableHeadings = ["ID", "Email", "First Name", "Last Name", "Avatar"];
-
-  const tableHeadings = [
-    "Farmer ID", "First Name", "Last Name", "Age", "Surname", "Gender", 
-    "Contact Details", "Education Level", "Residential Address", "Date Created", 
-    "Farm Location", "Farm Association Membership", "Farming Experience", "Farm GPS Coordinates", 
-    "Farming Practice", "Crop Type", "Harvest Dates","Land Size", "Market Prices", 
-    "Mechanization", "Revenue", "Soil Type", "Yield Per Acre"
-  ];
 //To handel a farmer Edit
-  const handleEditClick = (farmer) => {
+  const handleEditClick = (tableFarmer) => {
+    const farmerId = tableFarmer[0];
+    const filteredFarmer = farmersData.filter(farmer => farmer.farmer_Id  === farmerId)
+    const farmer = filteredFarmer[0];
     setSelectedFarmer(farmer)
     setIsEditFarmerModalOpen(true);
   };
 
-  const handleDelete = (farmers) => {
+  const handleDelete = async(farmer) => {
     // let farmer_id = farmers[0]
-    const farmer_name = farmers[1] + " " + farmers[2]
+    const farmer_name = farmer[1] + " " + farmer[2]
     const deleteMessage =  `Are sure you want to delete ${farmer_name}`;
+    const farmer_id = farmer[0];
     AlertWithResponse(
       "Delete Farmer",
       deleteMessage,
-      ()=> {
-        //TODO api to delete farmer and return response
-        const successMessage = `${farmer_name} has been deleted successfully`;
-        SuccessAlert(successMessage);
+      async ()=> {
+        //Api call to delete Farmer
+        const response = await FarmerService.updateFarmer(farmer_id);
+        if (response.success) {
+          // const successMessage = `${farmer_name} has been deleted successfully`;
+          SuccessAlert(response.message)
+          fetchData();
+          } else {
+            ErrorAlert("Error!", "Failed to delete farmer");
+          }
       }
     )
   }
@@ -64,9 +70,9 @@ function ManageFarmer() {
     // Function to fetch farmer data
     const fetchData = async () => {
       try {
-        const {success , farmers} = await FarmerService.getAllFarmers();
+        const {success, farmers} = await FarmerService.getAllFarmers();
         if (success && farmers) {
-          const formattedData = farmers.map((farmer) => [
+          const formattedFarmers = farmers.map((farmer) => [
             farmer.farmer_Id,
             Capitalize(farmer.first_name),
             Capitalize(farmer.last_name),
@@ -91,7 +97,10 @@ function ManageFarmer() {
             farmer.soil_type,
             farmer.yield_per_acre,
           ]);
-          setTableContent(formattedData);
+          //Setting farmers data
+          setTableContent(formattedFarmers);
+          setFarmersData(farmers)
+          //End
           //Total farmers
           setTotalFarmers(farmers.length)
           //Total active farmers
@@ -135,7 +144,7 @@ function ManageFarmer() {
       link.setAttribute("download", "farmers.csv");
       document.body.appendChild(link); // Append for Firefox compatibility
       link.click();
-      document.body.removeChild(link); // Clean up
+      document.body.removeChild(link); 
     }
 
   return (
@@ -198,7 +207,7 @@ function ManageFarmer() {
       <Card>
         <TableComponent
         table_id = "manage_farmer" 
-        tableHeadings={tableHeadings} 
+        tableHeadings={farmersTableHeading} 
         tableContent={tableContent}
         deleteButton = {<DangerButtons onClick= {handleDelete} text="Delete" btnIcon={<MdDeleteForever className="mr-2 h-5 w-5" />}/>}
         onDeleteClick = {handleDelete}
@@ -207,7 +216,7 @@ function ManageFarmer() {
         />
       </Card>
       <ModalComponent header="Edit Farmer" openModal = {isEditFarmerModalOpen} onClose ={()=> setIsEditFarmerModalOpen(false)}>
-        <EditFarmer selectedFarmer={selectedFarmer} />
+        <EditFarmer selectedFarmer={selectedFarmer} fetchData={fetchData} />
       </ModalComponent>
     </main>
   );
