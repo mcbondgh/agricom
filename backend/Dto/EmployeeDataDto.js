@@ -38,7 +38,11 @@ class EmployeeDataDto{
 
     }
     getAge(){
+<<<<<<< HEAD
         return this.age
+=======
+        this.age=age
+>>>>>>> eb3524e93a46e0b4a04dd443f6651375b98d003a
     }
     setAge(age){
         this.age=age

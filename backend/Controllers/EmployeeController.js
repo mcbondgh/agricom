@@ -57,6 +57,7 @@ const comments = commentsValue !== undefined ? commentsValue : null;
        
         return allEmployees
     }
+<<<<<<< HEAD
     async updateEmployeeDetails(employeeObject) {
             const connection=await db.getConnection()
               await connection.execute(`update employees set age=?,comments=?,email_address=?,digital_address=?,
@@ -70,5 +71,7 @@ const comments = commentsValue !== undefined ? commentsValue : null;
       const connection=await db.getConnection()
       await connection.execute("update employees set IS_DELETED=?,date_deleted=? where EMPLOYEE_id=?",[true,new Date(Date.now()),employeeId])
     }
+=======
+>>>>>>> eb3524e93a46e0b4a04dd443f6651375b98d003a
 }
 module.exports=EmployeeController

@@ -1,11 +1,18 @@
 class FarmersDto {
     farmer_Id
+<<<<<<< HEAD
     first_name
+=======
+>>>>>>> eb3524e93a46e0b4a04dd443f6651375b98d003a
     surname
     lastname
     gender
     age
+<<<<<<< HEAD
     contact_details
+=======
+    contract_details
+>>>>>>> eb3524e93a46e0b4a04dd443f6651375b98d003a
     residential_address
     farming_experience
     educational_level
@@ -15,16 +22,27 @@ class FarmersDto {
     is_deleted
     date_created
     farm_association_memb
+<<<<<<< HEAD
     constructor(farmer_Id,first_name, surname, lastname, gender, age,
         contact_details, residential_address,
         farming_experience, educational_level, farm_gps_cordinate, login_id, is_active, is_deleted, date_created, farm_association_memb) {
         this.farmer_Id = farmer_Id
         this.first_name=first_name
+=======
+    constructor(farmer_Id, surname, lastname, gender, age,
+        contract_details, residential_address,
+        farming_experience, educational_level, farm_gps_cordinate, login_id, is_active, is_deleted, date_created, farm_association_memb) {
+        this.farmer_Id = farmer_Id
+>>>>>>> eb3524e93a46e0b4a04dd443f6651375b98d003a
         this.surname = surname
         this.lastname = lastname
         this.gender = gender
         this.age = age
+<<<<<<< HEAD
         this.contact_details = contact_details
+=======
+        this.contract_details = contract_details
+>>>>>>> eb3524e93a46e0b4a04dd443f6651375b98d003a
         this.educational_level = educational_level
         this.farm_gps_cordinate = farm_gps_cordinate
         this.farming_experience = farming_experience
@@ -38,12 +56,15 @@ class FarmersDto {
     getFarmerId() {
         return this.farmer_Id
     }
+<<<<<<< HEAD
     getFirstName(){
         return this.first_name
     }
     setFirstName(first_name){
         this.first_name=first_name
     }
+=======
+>>>>>>> eb3524e93a46e0b4a04dd443f6651375b98d003a
     setFrmerID(farmerId) {
         this.farmer_Id = farmerId
     }
@@ -71,11 +92,19 @@ class FarmersDto {
     setAge(age) {
         this.age = age
     }
+<<<<<<< HEAD
     getcontact_details() {
         return this.contact_details
     }
     setcontact_details(contact_details) {
         this.contact_details = contact_details
+=======
+    getContract_details() {
+        return this.contract_details
+    }
+    setContract_details(contract_details) {
+        this.contract_details = contract_details
+>>>>>>> eb3524e93a46e0b4a04dd443f6651375b98d003a
     }
     getEducational_level() {
         return this.educational_level
@@ -87,7 +116,11 @@ class FarmersDto {
         return this.farm_gps_cordinate
     }
     setFarm_gps_cordinate(farm_gps_cordinate) {
+<<<<<<< HEAD
         this.farm_gps_cordinate = farm_gps_cordinate
+=======
+        this.ffarm_gps_cordinate = farm_gps_cordinate
+>>>>>>> eb3524e93a46e0b4a04dd443f6651375b98d003a
     }
     getFarming_experience() {
         return this.farming_experience

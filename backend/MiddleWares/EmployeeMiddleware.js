@@ -25,12 +25,21 @@ async function validateEmployeeDateInput(req,res,next) {
         const connection=await db.getConnection()
         const [existEmployee]=await connection.execute('select EMPLOYEE_id from employees where EMPLOYEE_id=?',[employeeId])
         if(existEmployee.length>0){
+<<<<<<< HEAD
+=======
+            console.log(existEmployee)
+>>>>>>> eb3524e93a46e0b4a04dd443f6651375b98d003a
             return res.send({msg:`Employee with id ${employeeId} already exist`})
         }else{
             const {error}=employeeShema.validate(req.body)
             if(error){
                 return res.send({msg:error.details[0].message})
+<<<<<<< HEAD
             }else{ 
+=======
+            }else{
+                console.log("the num "+req.body.mobile_numbe)
+>>>>>>> eb3524e93a46e0b4a04dd443f6651375b98d003a
                 const employmentdate=moment(req.body.date_of_employment,"YYYY-MM-DD")
               employeeController.saveEmployeeDetails(new EmployeeDataDto(req.body.EMPLOYEE_id,req.body.first_name,req.body.last_name,
                 req.body.other_name,req.body.email_address,req.body.digital_address,req.body.gender,req.body.mobile_numbe,
@@ -45,6 +54,7 @@ async function validateEmployeeDateInput(req,res,next) {
     }
     
 }
+<<<<<<< HEAD
 async function updateEmployeeMiddleWare(req,res,next) {
    try{
     const employeeId=req.params.employeeId
@@ -96,3 +106,6 @@ async function delete_employeeMiddleware(req,res,next) {
     }
 }
 module.exports={validateEmployeeDateInput,updateEmployeeMiddleWare,delete_employeeMiddleware}
+=======
+module.exports=validateEmployeeDateInput
+>>>>>>> eb3524e93a46e0b4a04dd443f6651375b98d003a
