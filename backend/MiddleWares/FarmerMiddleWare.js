@@ -14,7 +14,7 @@
     age:Joi.number().integer().required(),
     contact_details:Joi.string().required(),
     residential_address:Joi.string().required(),
-    farming_experience:Joi.string().required(),
+    farming_experience:Joi.number().integer().required(),
     education_level:Joi.string().required(),
     farm_gps_coordinates:Joi.string().required(),
     farm_association_memb:Joi.string().required(),

@@ -15,7 +15,7 @@ class FarmerController{
         FARM_ASSOCIATION_MEMB,LOGIN_ID,IS_ACTIVE,IS_DELETED,DATE_CREATED)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
        [farmerDto.getFarmerId(),farmerDto.getFirstName(),farmerDto.getSurname(),farmerDto.getLastname(),farmerDto.getGender(),
         farmerDto. getAge(),farmerDto.getcontact_details(),farmerDto.getResidential_address(),farmerDto.getFarming_experience(),
-        farmerDto.getEducational_level(),farmerDto.getFarm_gps_cordinate(),farmerDto.getFarm_association_memb(),farmerDto. getLogin_id(),
+        farmerDto.getEducation_level(),farmerDto.getFarm_gps_coordinates(),farmerDto.getFarm_association_memb(),farmerDto. getLogin_id(),
         farmerDto.getIs_active(),farmerDto.getIs_deleted(),farmerDto.getDate_created()
        ])
      }catch(err){
