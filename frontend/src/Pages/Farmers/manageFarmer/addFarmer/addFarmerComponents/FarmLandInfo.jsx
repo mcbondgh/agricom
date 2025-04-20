@@ -1,6 +1,5 @@
 import PropType from "prop-types";
 import { Label, TextInput, Select } from "flowbite-react";
-import { allowTextOnly } from "@/utils/utilityFunction";
 
 function FarmLandInfo({ formData, updateFormData, errors, setErrors }) {
  //Handling the changes in input fields
@@ -37,7 +36,15 @@ function FarmLandInfo({ formData, updateFormData, errors, setErrors }) {
         <span className="flex gap-1">
         <Label htmlFor="crop_type" value="Crop Type" /><span className="text-red-500 ml-1">*</span>
         </span>
-        <TextInput color={errors.crop_type ? "failure" : "success"} onKeyDown={allowTextOnly} id="crop_type" name="crop_type" value={formData.crop_type || ""} type="text" onChange={handleChange} />
+        <Select color={errors.crop_type ? "failure" : "success"} id="crop_type" name="crop_type" value={formData.crop_type || ""} onChange={handleChange}>
+          <option value="">Select crop type</option>
+          <option value="legumes">Legumes</option>
+          <option value="cereals">Cereals</option>
+          <option value="vegetables">Vegetables</option>
+          <option value="fruits">Fruits</option>
+          <option value="root and tuber">Root and Tuber</option>
+          <option value="cash crops">Cash Crops</option>
+        </Select>
         {errors.crop_type && <p className="text-red-500 text-sm">{errors.crop_type[0]}</p>}
       </div>
       <div>

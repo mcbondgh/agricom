@@ -1,9 +1,11 @@
 import axios from 'axios'
 
+const BASE_URL = "http://localhost:3001/agricom";
+
 const FarmerService = {
     registerFarmer: async (farmerData) => {
         try {
-            const response = await axios.post("http://localhost:3001/agricom/farmers/register", farmerData)
+            const response = await axios.post(`${BASE_URL}/farmers/register`, farmerData)
             const data = response.data;
             if (response.status === 200) {
                 return { success: true, farmer: data.farmer, message: data.message};
@@ -18,7 +20,7 @@ const FarmerService = {
     // Fetch all farmers
     getAllFarmers: async () => {
         try {
-            const response = await axios.get("http://localhost:3001/agricom/farmers", {withCredentials: true})
+            const response = await axios.get(`${BASE_URL}/farmers`, {withCredentials: true})
             const farmers = response.data;
             if (response.status === 200) {
                 return { success: true, farmers: farmers };
@@ -30,9 +32,10 @@ const FarmerService = {
             return null;
         }
     },
-    updateFarmer: async (farmerData) => {
+    
+    updateFarmer: async (farmer_Id,farmerData) => {
         try {
-            const response = await axios.post("http://localhost:3001/agricom/farmers/update", farmerData)
+            const response = await axios.put(`${BASE_URL}/farmers/${farmer_Id}`, farmerData)
             const data = response.data;
             if (response.status === 200) {
                 return { success: true, farmer: data.farmer, message: data.message};
@@ -47,11 +50,11 @@ const FarmerService = {
 
     deleteFarmer: async (id) => {
         try {
-            const response = await axios.delete(`http://localhost:3001/agricom/farmers/${id}`, {
+            const response = await axios.delete(`${BASE_URL}/farmers/${id}`, {
                 withCredentials: true,
             });
             const data = response.data;
-            if (response.status === 200) {
+            if (response.status === 200 && data.success) {
                 return { success: true, message: data.message };
             } else {
                 return { success: false, message: data.message || "Failed to delete farmer" };
@@ -61,8 +64,6 @@ const FarmerService = {
             return { success: false, message: "Server error while deleting farmer" };
         }
     },
-
-    
 }
 
 export default FarmerService;

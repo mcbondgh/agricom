@@ -8,7 +8,7 @@ import FarmYieldInfo from './addFarmerComponents/FarmYieldInfo';
 import { Button } from 'flowbite-react';
 import FarmerService from '@/services/farmerService';
 import { ErrorAlert,SuccessAlert } from '@/utils/Alerts';
-import {farmerSchema, farmerInfoSchema, farmLandInfoSchema, yieldInfoSchema} from '@/schemas/farmerSchema';
+import {farmerSchema, farmerInfoSchema, farmLandInfoSchema, yieldInfoSchema} from '@/schemas/FarmerSchema';
 
 
 function AddFarmer({setIsAddFarmerModalOpen, fetchData}) {
