@@ -1,15 +1,19 @@
 import PropTypes from "prop-types";
 import { Label, TextInput, Select } from "flowbite-react";
 import { useState,useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import { GrDocumentUpdate } from "react-icons/gr";
 import { PrimaryButtons } from "@/components/ui/Buttons";
-import { farmerSchema } from "@/schemas/farmerSchema";
+import { farmerSchema } from "@/schemas/FarmerSchema";
 import FarmerService from '@/services/farmerService';
 import { ErrorAlert , SuccessAlert} from '@/utils/Alerts';
+import { TransparentLoader } from "@/components/ui/TransparentLoader";
 import { farmerKeys } from "@/utils/ArraysData";
 
 
-export const EditFarmer = ({selectedFarmer, fetchData}) => {
+export const EditFarmer = ({selectedFarmer, fetchData, setIsEditFarmerModalOpen}) => {
+   //navigate  
+  const navigate = useNavigate();
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -81,18 +85,24 @@ export const EditFarmer = ({selectedFarmer, fetchData}) => {
     }
 
     // Proceed if valid
-    console.log("Validated Data", result.data);
+    const editedFarmer = result.data;
+    console.log("Validated Data", editedFarmer);
+    const farmer_id = selectedFarmer.farmer_Id;
+    console.log(farmer_id)
+    console.log(selectedFarmer)
     setIsSubmitting(true)
-      const response = await FarmerService.updateFarmer(result.data);
+      const response = await FarmerService.updateFarmer(farmer_id, editedFarmer);
       if (response.success) {
         SuccessAlert(response.message)
         setFormData({});
         setFormErrors({}); // clear errors if all is valid
+        setIsEditFarmerModalOpen(false)
         fetchData();
+        navigate("/manage-farmer")
         } else {
           ErrorAlert("Error!", "Failed to update farmer data!");
         }
-     setIsSubmitting(false)   
+     setIsSubmitting(false);   
   }
 
   return (
@@ -212,13 +222,21 @@ export const EditFarmer = ({selectedFarmer, fetchData}) => {
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-16">
-                <div>
-                  <span className="flex gap-1">
-                    <Label htmlFor="crop_type" value="Crop Type" /><span className="text-red-500 ml-1">*</span>
-                  </span>
-                    <TextInput color= {formErrors.crop_type ? "failure" : "success"} id="crop_type" name="crop_type" type="text" value={formData.crop_type} onChange={handleChange}/>
-                    {formErrors.crop_type && <p className="text-red-500 text-sm">{formErrors.crop_type[0]}</p>}
-                </div>
+              <div>
+                <span className="flex gap-1">
+                <Label htmlFor="crop_type" value="Crop Type" /><span className="text-red-500 ml-1">*</span>
+                </span>
+                <Select color={formErrors.crop_type ? "failure" : "success"} id="crop_type" name="crop_type" value={formData.crop_type || ""} onChange={handleChange}>
+                  <option value="">Select crop type</option>
+                  <option value="legumes">Legumes</option>
+                  <option value="cereals">Cereals</option>
+                  <option value="vegetables">Vegetables</option>
+                  <option value="fruits">Fruits</option>
+                  <option value="root and tuber">Root and Tuber</option>
+                  <option value="cash crops">Cash Crops</option>
+                </Select>
+                {formErrors.crop_type && <p className="text-red-500 text-sm">{formErrors.crop_type[0]}</p>}
+              </div>
                 <div>
                   <span className="flex gap-1">
                     <Label htmlFor="soil_type" value="Soil Type" /><span className="text-red-500 ml-1">*</span>
@@ -295,6 +313,8 @@ export const EditFarmer = ({selectedFarmer, fetchData}) => {
                 disabled = {isSubmitting}
                 />
             </div>
+             {/* Loading component */}
+      {isSubmitting &&  <TransparentLoader/>}
     </main>
   )
 }
@@ -303,4 +323,5 @@ export const EditFarmer = ({selectedFarmer, fetchData}) => {
 EditFarmer.propTypes = {
   selectedFarmer: PropTypes.array,
   fetchData: PropTypes.func.isRequired,
+  setIsEditFarmerModalOpen: PropTypes.func
 };

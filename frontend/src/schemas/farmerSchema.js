@@ -81,7 +81,10 @@ export const farmerSchema = z.object({
 
   crop_type: z
     .string()
-    .min(1, "Crop type required"),
+    .min(1, "Crop type required")
+    .refine(val => ["legumes", "cereals", "vegetables" , "fruits" , "root and tuber", "cash crops"].includes(val), {
+      message: "Crop type is required", 
+      }),
 
   soil_type: z
     .string()

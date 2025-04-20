@@ -6,7 +6,8 @@ import { ColumnFilterDropdown } from "@/components/ui/ColumnFilterDropdown";
 import SearchBar from "@/components/ui/SearchBar";
 import { DangerButtonsMd } from "@/components/ui/Buttons";
 import { MdDeleteSweep } from "react-icons/md";
-import AuthService from "@/services/authService";
+import { FaSortAlphaUp ,FaSortAlphaDown  } from "react-icons/fa";
+// import AuthService from "@/services/authService";
 
 export function TableComponent({
   table_id,
@@ -16,7 +17,14 @@ export function TableComponent({
   editButton,
   onEditClick,
   onDeleteClick,
+  onExportRef,
 }) {
+  //For column width
+  const STORAGE_KEYS = {
+    widths: (id) => `${id}_columnWidths`,
+    sticky: (id) => `${id}_stickyHeader`,
+  };
+  //USE-STATE VARIABLES
   const [checkedRows, setCheckedRows] = useState({});
   const [checkAll, setCheckAll] = useState(false);
   const [selectedRowsCount, setSelectedRowsCount] = useState(0);
@@ -24,37 +32,65 @@ export function TableComponent({
   const [filteredTableContent, setFilteredTableContent] = useState(tableContent);
   const [currentPage, setCurrentPage] = useState(1);
   const [stickyRow, setStickyRow] = useState(() => {
-    const stored = localStorage.getItem("stickyHeader");
+    const stored = localStorage.getItem(STORAGE_KEYS.sticky(table_id));
     return stored === "true";
   });
   const [columnWidths, setColumnWidths] = useState(() => {
-    const saved = localStorage.getItem("columnWidths");
+    const saved = localStorage.getItem(STORAGE_KEYS.widths(table_id));
     return saved ? JSON.parse(saved) : tableHeadings.map(() => 150);
   });
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  //Function to handle the number of selected Rows
   const handlePerPageChange = (e) => {
     const selectedPageNumber = Number(e.target.value);
     setRowsPerPage(selectedPageNumber);
   }
+  //use state for sorting
+  const [sortConfig, setSortConfig] = useState({ columnIndex: null, direction: null });
+ 
   //Rows per page
   const tableRef = useRef(null);
+  //Resize
   const resizeRef = useRef({ index: null, startX: 0 });
 
+  //Storing or Persisting rows width to local storage
   useEffect(() => {
-    localStorage.setItem("columnWidths", JSON.stringify(columnWidths));
-  }, [columnWidths]);
-
+    localStorage.setItem(STORAGE_KEYS.widths(table_id), JSON.stringify(columnWidths));
+  });
+  
+  //Effect for filtering table content
   useEffect(() => {
     setCheckedRows(new Array(tableContent.length).fill(false));
     setFilteredTableContent(tableContent);
   }, [tableContent]);
 
+  //Effect to count number of selected rows
   useEffect(() => {
     const count = Object.values(checkedRows).filter(Boolean).length;
     setSelectedRowsCount(count);
   }, [checkedRows]);
 
+    //For pagination
+    const totalPages = Math.ceil(filteredTableContent.length / rowsPerPage);
+
+    const paginatedContent = useMemo(() => {
+      const start = (currentPage - 1) * rowsPerPage;
+      return filteredTableContent.slice(start, start + rowsPerPage);
+    }, [filteredTableContent, currentPage, rowsPerPage]);
+  
+    const visibleColumnIndexes = visibleColumns
+      .map((visible, index) => (visible ? index : null))
+      .filter((i) => i !== null);
+    
+      useEffect(() => {
+        const isIndeterminate = selectedRowsCount > 0 && selectedRowsCount < paginatedContent.length;
+        if (tableRef.current) {
+          const checkbox = tableRef.current.querySelector('thead input[type="checkbox"]');
+          if (checkbox) checkbox.indeterminate = isIndeterminate;
+        }
+      }, [selectedRowsCount, paginatedContent.length]);
+
+  //Function for search
   const handleSearch = (query) => {
     if (!query) {
       setFilteredTableContent(tableContent);
@@ -70,13 +106,13 @@ export function TableComponent({
     setFilteredTableContent(filtered);
     setCurrentPage(1);
   };
-
+  //Function to toggle single columns in filtering
   const toggleColumnVisibility = (index) => {
     const updated = [...visibleColumns];
     updated[index] = !updated[index];
     setVisibleColumns(updated);
   };
-
+ //Function to toggle all columns in filtering
   const toggleAllColumnsVisibility = () => {
     const newState = visibleColumns.every(Boolean)
       ? new Array(tableHeadings.length).fill(false)
@@ -92,13 +128,19 @@ export function TableComponent({
     const isChecked = e.target.checked;
     setCheckAll(isChecked);
     const newChecked = { ...checkedRows };
-    paginatedContent.forEach((row) => {
-    newChecked[row[0]] = isChecked;
-  });
-
+    filteredTableContent.forEach((row) => {
+      newChecked[row[0]] = isChecked;
+    });    
   setCheckedRows(newChecked);
   };
-
+  //For auto-update the checkbox state when switching pages
+  useEffect(() => {
+    const currentPageKeys = paginatedContent.map((row) => row[0]);
+    const allChecked = currentPageKeys.every((key) => checkedRows[key]);
+    setCheckAll(allChecked);
+  }, [paginatedContent, checkedRows]);
+  
+  //Function to handle column resizing
   const handleColumnResizeStart = (e, index) => {
     resizeRef.current = { index, startX: e.clientX };
     document.addEventListener("mousemove", handleColumnResize);
@@ -108,13 +150,11 @@ export function TableComponent({
   const handleColumnResize = (e) => {
     const { index, startX } = resizeRef.current;
     const deltaX = e.clientX - startX;
-
     setColumnWidths((prevWidths) => {
       const newWidths = [...prevWidths];
       newWidths[index] = Math.max(60, newWidths[index] + deltaX);
       return newWidths;
     });
-
     resizeRef.current.startX = e.clientX;
   };
 
@@ -123,21 +163,72 @@ export function TableComponent({
     document.removeEventListener("mouseup", stopColumnResize);
   };
 
-  const handleDeleteAll = async () => {
-    const result = await AuthService.fetchUser();
-    console.log(result);
+  const handleColumnReset = (index) => {
+    setColumnWidths((prev) => {
+      const updated = [...prev];
+      updated[index] = 150;
+      return updated;
+    });
+    // optional: trigger small animation class
+  }
+
+  //Function for sorting - handle header clicks:
+  const handleSort = (index) => {
+    setSortConfig((prev) => {
+      if (prev.columnIndex === index) {
+        const newDirection = prev.direction === "asc" ? "desc" : "asc";
+        return { columnIndex: index, direction: newDirection };
+      } else {
+        return { columnIndex: index, direction: "asc" };
+      }
+    });
   };
-
-  const totalPages = Math.ceil(filteredTableContent.length / rowsPerPage);
-
-  const paginatedContent = useMemo(() => {
-    const start = (currentPage - 1) * rowsPerPage;
-    return filteredTableContent.slice(start, start + rowsPerPage);
-  }, [filteredTableContent, currentPage, rowsPerPage]);
-
-  const visibleColumnIndexes = visibleColumns
-    .map((visible, index) => (visible ? index : null))
-    .filter((i) => i !== null);
+  //useEffect that sets data after sorting:
+  useEffect(() => {
+    let sorted = [...tableContent];
+    if (sortConfig.columnIndex !== null) {
+      sorted.sort((a, b) => {
+        const valA = a[sortConfig.columnIndex];
+        const valB = b[sortConfig.columnIndex];
+      if (typeof valA === "string" && typeof valB === "string") {
+          return sortConfig.direction === "asc" ? valA.localeCompare(valB): valB.localeCompare(valA);
+        }
+        if (typeof valA === "number" && typeof valB === "number") {
+          return sortConfig.direction === "asc" ? valA - valB : valB - valA;
+        }
+        return 0;
+      });
+    }
+  
+    setFilteredTableContent(sorted);
+  }, [tableContent, sortConfig]);  
+  
+    //Function to delete all selected rows
+    const handleDeleteAll = async () => {
+      const rowsToDelete = Object.keys(checkedRows).filter((key) => checkedRows[key]);
+      if (rowsToDelete.length > 0) {
+        console.log(rowsToDelete)
+      }
+      const selectedRowData = filteredTableContent.filter(
+        (row) => checkedRows[row[0]]
+      );
+    
+      console.log("Rows to delete:", selectedRowData);
+    };
+    
+    //using useEffect to expose handleExport function to parent
+    useEffect(() => {
+      //Function to handle selected data in table to be exported
+      const handleExport = () => {
+        const selectedData = filteredTableContent.filter(
+          (row) => checkedRows[row[0]]
+          );
+          return selectedData;
+      };
+      if (onExportRef) {
+        onExportRef(handleExport);
+      }
+    },[onExportRef, filteredTableContent, checkedRows])
 
   return (
     <main>
@@ -177,15 +268,22 @@ export function TableComponent({
               visibleColumns[index] ? (
                 <Table.HeadCell
                   key={index}
-                  className="relative bg-green-600 text-white font-semibold text-center whitespace-nowrap overflow-hidden overflow-ellipsis border-r-[1px] border-gray-50"
+                  className={`relative ${sortConfig.columnIndex === index ? "bg-green-800": "bg-green-600"} text-white font-semibold text-center whitespace-nowrap overflow-hidden overflow-ellipsis border-r-[1px] border-gray-50`}
                   style={{
                     width: columnWidths[index],
                     maxWidth: columnWidths[index],
                   }}
+                  onDoubleClick={()=>handleColumnReset(index)}
                 >
                   <div className="flex justify-between items-center">
-                    <span title={heading} className="w-full overflow-hidden text-ellipsis">
+                    <span 
+                      onClick={() => handleSort(index)}
+                      className="w-full overflow-hidden text-ellipsis cursor-pointer flex justify-center items-center gap-1"
+                      title={`Click to sort by ${heading}`}>
                       {heading}
+                      {sortConfig.columnIndex === index && (
+                        <span>{sortConfig.direction === "asc" ? <FaSortAlphaUp className="h-5 w-5"/> : <FaSortAlphaDown className="h-5 w-5"/>}</span>
+                      )}
                     </span>
                     <div
                       className="absolute top-0 right-0 h-full w-2 cursor-col-resize z-10 hover:bg-green-400 transition-all"
@@ -210,7 +308,7 @@ export function TableComponent({
                     className="h-5 w-5 cursor-pointer"
                     onClick={() => {
                       setStickyRow(false);
-                      localStorage.setItem("stickyHeader", "false");
+                      localStorage.setItem(STORAGE_KEYS.sticky(table_id), "false");
                     }}
                   />
                 ) : (
@@ -218,7 +316,7 @@ export function TableComponent({
                     className="h-5 w-5 cursor-pointer"
                     onClick={() => {
                       setStickyRow(true);
-                      localStorage.setItem("stickyHeader", "true");
+                      localStorage.setItem(STORAGE_KEYS.sticky(table_id), "true");
                     }}
                   />
                 )}
@@ -325,4 +423,5 @@ TableComponent.propTypes = {
   editButton: PropTypes.node,
   onEditClick: PropTypes.func,
   onDeleteClick: PropTypes.func,
+  onExportRef: PropTypes.func
 };

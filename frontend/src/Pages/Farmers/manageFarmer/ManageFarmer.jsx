@@ -3,19 +3,20 @@ import AddFarmer from "../manageFarmer/addFarmer/AddFarmer";
 import { FiPlus } from "react-icons/fi";
 import { TableComponent } from "@/components/ui/Table";
 import { Card } from "flowbite-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import FarmerService from "@/services/farmerService";
 import { EditFarmer } from "./editFarmer/EditFarmer";
 import { FaUserEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import { DangerButtons, PrimaryButtons, PrimaryButtonsOutline } from "@/components/ui/Buttons";
 import { AlertWithResponse, SuccessAlert, ErrorAlert } from "@/utils/Alerts";
-import { Capitalize, selectedTableData } from "@/utils/utilityFunction";
+import { Capitalize } from "@/utils/utilityFunction";
 import { IoIosPeople } from "react-icons/io";
 import { FaUserCheck, FaUsersSlash , FaMale ,FaFemale } from "react-icons/fa";
 import { GiFarmer } from "react-icons/gi";
 import { CiExport } from "react-icons/ci";
 import { farmersTableHeading } from "@/utils/ArraysData";
+import { TransparentLoader } from "@/components/ui/TransparentLoader";
 //TEST DATA
 // import {farmersTableHeading, tableContents } from "@/utils/testData";
 
@@ -34,7 +35,10 @@ function ManageFarmer() {
   const [totalMale, setTotalMale] = useState(0)
   const [totalFemale, setTotalFemale] = useState(0)
   const [totalInactiveFarmers, setTotalInactiveFarmers] = useState(0)
-
+  const [loading, setLoading] = useState(false);
+  //UseRef for Exporting Selected user
+  const exportRef = useRef(null);
+  
 //To handel a farmer Edit
   const handleEditClick = (tableFarmer) => {
     const farmerId = tableFarmer[0];
@@ -53,15 +57,17 @@ function ManageFarmer() {
       "Delete Farmer",
       deleteMessage,
       async ()=> {
+        setLoading(true);
         //Api call to delete Farmer
-        const response = await FarmerService.updateFarmer(farmer_id);
+        const response = await FarmerService.deleteFarmer(farmer_id);
         if (response.success) {
-          // const successMessage = `${farmer_name} has been deleted successfully`;
-          SuccessAlert(response.message)
-          fetchData();
+          const successMessage = `${farmer_name} has been deleted successfully`;
+          SuccessAlert(successMessage)
+          fetchData();    
           } else {
             ErrorAlert("Error!", "Failed to delete farmer");
           }
+          setLoading(false);
       }
     )
   }
@@ -128,9 +134,13 @@ function ManageFarmer() {
 
     //handle checked farmer export
     const handelCheckedFarmers = () => {
-      const message = "Please select at least one farmer to export.";
-      const checkedFarmersData = selectedTableData("manage_farmer")
-      checkedFarmersData.length > 1 ? exportFarmers(checkedFarmersData) : ErrorAlert("Error", message)  
+      if (exportRef.current) {
+        // exportRef.current.click();
+        const checkedFarmersData = exportRef.current();
+        const message = "Please select at least one farmer to export.";
+        checkedFarmersData.length >= 1 ? exportFarmers([farmersTableHeading, ... checkedFarmersData]) : ErrorAlert("Error", message)  
+        return
+      }
     };
 
     const exportFarmers = (checkedFarmersData) => {
@@ -168,38 +178,38 @@ function ManageFarmer() {
       <article className="grid grid-cols-2 md:grid-cols-5 text-gray-700 gap-6">
         <Card  title="Total Farmers" className="w-full h-32">
           <div className="flex gap-3 items-center">
-            <IoIosPeople className="mr-2 h-10 w-10" />
-            <span className="text-xl font-medium">Total Farmers</span>
+            <IoIosPeople className="mr-2 md:h-10 md:w-10 w-6 h-6" />
+            <span className="md:text-xl font-medium">Total Farmers</span>
           </div>
-          <p className="text-4xl font-bold">{totalFarmers}</p>
+          <p className="md:text-4xl font-bold">{totalFarmers}</p>
         </Card>
         <Card  title="Total Farmers" className="w-full h-32">
           <div className="flex gap-3 items-center">
-            <FaMale className="mr-2 h-10 w-10" />
-            <span className="text-xl font-medium">Total Male</span>
+            <FaMale className="mr-2 md:h-10 md:w-10 w-6 h-6" />
+            <span className="md:text-xl font-medium">Total Male</span>
           </div>
-          <p className="text-4xl font-bold">{totalMale}</p>
+          <p className="md:text-4xl font-bold">{totalMale}</p>
         </Card>
         <Card  title="Total Farmers" className="w-full h-32">
           <div className="flex gap-3 items-center">
-            <FaFemale className="mr-2 h-10 w-10" />
-            <span className="text-xl font-medium">Total Female</span>
+            <FaFemale className="mr-2 md:h-10 md:w-10 w-6 h-6" />
+            <span className="md:text-xl font-medium">Total Female</span>
           </div>
-          <p className="text-4xl font-bold">{totalFemale}</p>
+          <p className="md:text-4xl font-bold">{totalFemale}</p>
         </Card>
         <Card  title="Total Farmers" className="w-full h-32">
           <div className="flex gap-3 items-center">
-            <FaUserCheck className="mr-2 h-10 w-10" />
-            <span className="text-xl font-medium">Active Farmers</span>
+            <FaUserCheck className="mr-2 md:h-10 md:w-10 w-6 h-6" />
+            <span className="md:text-xl font-medium">Active Farmers</span>
           </div>
-          <p className="text-4xl font-bold">{totalActiveFarmers}</p>
+          <p className="md:text-4xl font-bold">{totalActiveFarmers}</p>
         </Card>
         <Card  title="Total Farmers" className="w-full h-32">
           <div className="flex gap-3 items-center">
-            <FaUsersSlash  className="mr-2 h-10 w-10" />
-            <span className="text-xl font-medium">Inactive Farmers</span>
+            <FaUsersSlash  className="mr-2 md:h-10 md:w-10 w-6 h-6" />
+            <span className="md:text-xl font-medium">Inactive Farmers</span>
           </div>
-          <p className="text-4xl font-bold">{totalInactiveFarmers}</p>
+          <p className="md:text-4xl font-bold">{totalInactiveFarmers}</p>
         </Card>
       </article>
 
@@ -213,11 +223,14 @@ function ManageFarmer() {
         onDeleteClick = {handleDelete}
         editButton = {<PrimaryButtons onClick= {handleEditClick} text="Edit" btnIcon={<FaUserEdit className="mr-2 h-5 w-5" />} />}
         onEditClick={handleEditClick}
+        onExportRef = {(fn)=> exportRef.current = fn} //Hook into the export function
         />
       </Card>
       <ModalComponent header="Edit Farmer" openModal = {isEditFarmerModalOpen} onClose ={()=> setIsEditFarmerModalOpen(false)}>
-        <EditFarmer selectedFarmer={selectedFarmer} fetchData={fetchData} />
+        <EditFarmer setIsEditFarmerModalOpen={setIsEditFarmerModalOpen} selectedFarmer={selectedFarmer} fetchData={fetchData} />
       </ModalComponent>
+      {/* Loading component */}
+      {loading &&  <TransparentLoader/>}
     </main>
   );
 }
