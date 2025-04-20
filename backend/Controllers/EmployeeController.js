@@ -70,5 +70,10 @@ const comments = commentsValue !== undefined ? commentsValue : null;
       const connection=await db.getConnection()
       await connection.execute("update employees set IS_DELETED=?,date_deleted=? where EMPLOYEE_id=?",[true,new Date(Date.now()),employeeId])
     }
+    async getEmployee(employeeId){
+      const connection=await db.getConnection()
+      const user=await connection.execute("select*from employees where EMPLOYEE_id=?",[employeeId])
+      return user
+    }
 }
 module.exports=EmployeeController

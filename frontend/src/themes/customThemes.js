@@ -6,7 +6,7 @@ const CustomTheme = {
       on: "w-16",
       off: "w-64"
     },
-    inner: "h-full border-none overflow-y-auto overflow-x-hidden rounded bg-green-800 px-3 py-4"
+    inner: "h-full border border-green-800 overflow-y-auto overflow-x-hidden md:rounded bg-green-800 px-3 py-4"
   },
   collapse: {//Sidebar collapse items {sidebar items}
     button: "group flex w-full items-center rounded-lg p-2 text-base font-normal text-gray-900 transition duration-75 hover:bg-green-700",

@@ -94,5 +94,7 @@ async function delete_employeeMiddleware(req,res,next) {
     }else{
         res.send({msg:`Employee with Id ${employeeId} is not registered`})
     }
+
 }
+
 module.exports={validateEmployeeDateInput,updateEmployeeMiddleWare,delete_employeeMiddleware}

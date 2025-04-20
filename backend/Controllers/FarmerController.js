@@ -49,23 +49,48 @@ class FarmerController{
     async getAllFarmers(){
       const allFarmers=[]
       const connection=await db.getConnection()
-      const [farmers]=await connection.execute("select*from farmer")
-      farmers.forEach((farmer)=>{
-      const farmersDto=new FarmersDto()
-      farmersDto.setFrmerID(farmer.FARMER_ID)
-      farmersDto.setSurname(farmer.SURNAME)
-      farmersDto.setGender(farmer.GENDER)
-      farmersDto.setLastname(farmer.LAST_NAME)
-      farmersDto.setAge(farmer.AGE)
-      farmersDto.setcontact_details(farmer.CONTACT_DETAILS)
-      farmersDto.setResidential_address(farmer.RESIDENTIAL_ADDRESS)
-      farmersDto.setFarming_experience(farmer.FARMING_EXPERIENCE)
-      farmersDto.setEducational_level(farmer.EDUCATION_LEVEL)
-      farmersDto.setFarm_gps_cordinate(farmer.FARM_GPS_CORDINATES)
-      farmersDto.setFarm_association_memb(farmer.FARM_ASSOCIATION_MEMB)
-      farmersDto.setDate_created(farmer.DATE_CREATED)
-      allFarmers.push(farmersDto)
-      })
+      const [farmers]=await connection.execute("select*from farmer where IS_DELETED=?",[false])
+      const [farm]=await connection.execute("select*from farm")
+      const [yields]=await connection.execute("select*from yield")
+      for(let i=0;i<farmers.length;i++){
+        for(let j=0;j<farm.length;j++){
+          if(farmers[i].FARMER_ID===farm[j].FARMER_ID){
+            for(let y=0;y<yields.length;y++){
+              if(farm[j].FARM_ID===yields[y].FARM_ID){
+                const farmersDto=new FarmersDto()
+                farmersDto.setFrmerID(farmers[i].FARMER_ID)
+                farmersDto.setSurname(farmers[i].SURNAME)
+                farmersDto.setGender(farmers[i].GENDER)
+                farmersDto.setLastname(farmers[i].LAST_NAME)
+                farmersDto.setFirstName(farmers[i].firstName)
+                farmersDto.setAge(farmers[i].AGE)
+                farmersDto.setcontact_details(farmers[i].CONTACT_DETAILS)
+                farmersDto.setResidential_address(farmers[i].RESIDENTIAL_ADDRESS)
+                farmersDto.setFarming_experience(farmers[i].FARMING_EXPERIENCE)
+                farmersDto.setEducation_level(farmers[i].EDUCATION_LEVEL)
+                farmersDto.setFarm_gps_coordinates(farmers[i].FARM_GPS_CORDINATES)
+                farmersDto.setFarm_association_memb(farmers[i].FARM_ASSOCIATION_MEMB)
+                farmersDto.setDate_created(farmers[i].DATE_CREATED)
+                farmersDto.setFarmLocation(farm[j].FARM_LOCATION)
+                farmersDto.setFarming_practice(farm[j].FARMING_PRACTICE)
+                farmersDto.setCrop_type(farm[j].CROP_TYPE)
+                farmersDto.setHarvest_dates(yields[y].HARVEST_DATE)
+                farmersDto.setLand_size(farm[j].LAND_SIZE)
+                farmersDto.setMarket_prices(yields[y].MARKET_PRICES)
+                farmersDto.setRevenue(yields[y].REVENUE)
+                farmersDto.setMechanization(farm[j].MECHANIZATION)
+                farmersDto.setSoil_type(farm[j].SOIL_TYPE)
+                farmersDto.setYield_per_acre(yields[y].YIELD_PER_ACRE)
+                farmersDto.setIs_active(farmers[i].IS_ACTIVE)
+                allFarmers.push(farmersDto)
+                break
+              }
+            }
+           break 
+          }
+        }
+      
+      }
       return allFarmers
     }
     async updateFarmer(farmerUpdate){
@@ -73,9 +98,15 @@ class FarmerController{
         await connection.execute(`update farmer set AGE=?,RESIDENTIAL_ADDRESS=?,
           CONTACT_DETAILS=?,FARMING_EXPERIENCE=?,EDUCATION_LEVEL=?,FARM_GPS_CORDINATES=?,FARM_ASSOCIATION_MEMB=? where FARMER_ID=?` 
           ,[farmerUpdate.getAge(),farmerUpdate.getResidential_address(),farmerUpdate.getcontact_details()
-            ,farmerUpdate.getFarming_experience(),farmerUpdate.getEducational_level(),
-            farmerUpdate.getFarm_gps_cordinate(),farmerUpdate.getFarm_association_memb(),farmerUpdate.getFarmerId()])
-     
+            ,farmerUpdate.getFarming_experience(),farmerUpdate.getEducation_level(),
+            farmerUpdate.getFarm_gps_coordinates(),farmerUpdate.getFarm_association_memb(),farmerUpdate.getFarmerId()])
+          await connection.execute(`update farm set LAND_SIZE=?,FARM_LOCATION=?,CROP_TYPE=?,SOIL_TYPE=?,
+            FARMING_PRACTICE=?,MECHANIZATION=? where FARMER_ID=?`,[farmerUpdate.getLand_size(),farmerUpdate.getFarmLocation(),
+              farmerUpdate.getCrop_type(),farmerUpdate.getSoil_type(),farmerUpdate.getFarming_practice(),farmerUpdate.getMechanizations(),farmerUpdate.getFarmerId()
+            ])
+            await connection.execute(`update yield set HARVEST_DATE=?,YIELD_PER_ACRE=?,MARKET_PRICES=?,REVENUE=? where FARM_ID=?`,
+              [farmerUpdate.getHarvest_dates() ,farmerUpdate.getYield_per_acre(),farmerUpdate.getMarket_prices(),farmerUpdate.getRevenue(),farmerUpdate.getFarm_id()]
+            )
     }
     async deleteFamer(farmerId){
      const connection=await db.getConnection()

@@ -1,35 +1,55 @@
 import PropType from "prop-types";
 import { Label, TextInput } from "flowbite-react";
 
-function FarmYieldInfo({formData, updateFormData }) {
+function FarmYieldInfo({ formData, updateFormData, errors, setErrors }) {
+//Handling the changes in input fields
   const handleChange = (e) => {
-    updateFormData({ [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    updateFormData({ [name]: value });
+    // Remove error message when the user enters a valid value
+    if(errors[name]) {
+      setErrors((prev)=> {
+        const newErrors = {...prev}
+        delete newErrors[name]
+        return newErrors
+      })
+    }
   };
 
   return (
     <main className="space-y-4">
-      <div className="flex flex-col gap-1">
-        <Label htmlFor="harvest_dates" value="Harvest Date" />
-        <TextInput id="harvest_dates" name="harvest_dates" value={formData.harvest_dates || ""} type="date" onChange={handleChange} />
-      </div>
-      <div>
-        <Label htmlFor="yield_per_acre" value="Yield per Acre" />
-        <TextInput id="yield_per_acre" min={0} name="yield_per_acre" value={formData.yield_per_acre || ""} type="number" onChange={handleChange} />
-      </div>
-      <div>
-        <Label htmlFor="market_prices" value="Market Prices" />
-        <TextInput id="market_prices" min={0} name="market_prices" value={formData.market_prices || ""} type="number" onChange={handleChange} />
-      </div>
-      <div>
-        <Label htmlFor="revenue" value="Revenue" />
-        <TextInput id="revenue" min={0} name="revenue" value={formData.revenue || ""} type="number" onChange={handleChange} />
-      </div>
+      {[
+        { id: "harvest_dates", label: "Harvest Date", type: "date" },
+        { id: "yield_per_acre", label: "Yield per Acre", type: "number", min: 0 },
+        { id: "market_prices", label: "Market Prices", type: "number", min: 0 },
+        { id: "revenue", label: "Revenue", type: "number", min: 0 },
+      ].map(({ id, label, type, min }) => (
+        <div key={id}>
+          <span className="flex gap-1">
+            <Label htmlFor={id} value={label} />
+            <span className="text-red-500 ml-1">*</span>
+          </span>
+          <TextInput
+            id={id}
+            name={id}
+            type={type}
+            min={min}
+            value={formData[id] ?? ""}
+            onChange={handleChange}
+            color={errors[id] ? "failure" : "success"}
+          />
+          {errors[id] && <p className="text-red-500 text-sm">{errors[id][0]}</p>}
+        </div>
+      ))}
     </main>
   );
 }
 
-export default FarmYieldInfo;
 FarmYieldInfo.propTypes = {
-  updateFormData: PropType.func,
-  formData: PropType.object,
-}
+  updateFormData: PropType.func.isRequired,
+  formData: PropType.object.isRequired,
+  errors: PropType.object,
+  setErrors: PropType.func,
+};
+
+export default FarmYieldInfo;

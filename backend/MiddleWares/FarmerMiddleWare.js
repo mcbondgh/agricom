@@ -19,23 +19,23 @@
     farm_gps_coordinates:Joi.string().required(),
     farm_association_memb:Joi.string().required(),
     first_name:Joi.string().required(),
-    land_size:Joi.string().required(),
+    land_size:Joi.number().precision(4).required(),
     farm_location:Joi.string().required(),
     crop_type:Joi.string().required(),
     soil_type:Joi.string().required(),
     farming_practice:Joi.string().required(),
     mechanization:Joi.string().required(),
     harvest_dates:Joi.string().required(),
-    yield_per_acre:Joi.string().required(),
-    market_prices:Joi.string().required(),
-    revenue:Joi.string().required(),
+    yield_per_acre:Joi.number().precision(4).required(),
+    market_prices:Joi.number().precision(4).required(),
+    revenue:Joi.number().precision(4).required(),
  })
  // creating data base object
  const db=new DbConfig()
  // creating FarmerController object
  const farmerController=new FarmerController()
  async function validateFarmInfo(req,res,next) {
-    const farm_id=crypto.randomInt(0,100000)
+    const farm_id=crypto.randomInt(0,1000000)
     const farmer_id=req.session.farmer_id
     farmerController.saveFarmInformation(new FarmInfoDto(farm_id,req.body.land_size,req.body.farm_location,req.body.crop_type,
         req.body.soil_type,req.body.farming_practice,req.body.mechanization,farmer_id
@@ -44,7 +44,7 @@
     next()
  }
  async function validateYieldInfo(req,res,next) {
-    const yield_id=crypto.randomInt(0,100000)
+    const yield_id=crypto.randomInt(0,1000000)
     const farm_id=req.session.farm_id
     farmerController.saveYieldInfo(new YieldInfo(yield_id,req.body.harvest_dates,req.body.yield_per_acre,
         req.body.market_prices,req.body.revenue,farm_id))
@@ -68,7 +68,7 @@
             console.log(req.body.contact_details)
             const lastnameValue =req.body.last_name;
          const lastname = lastnameValue !== undefined ? lastnameValue : null;
-            const farmer_id=crypto.randomInt(0,1000)
+            const farmer_id=crypto.randomInt(0,1000000)
             // calling controller method to save farmer details into the database
             farmerController.saveFarmerInformation(new FarmersDto(farmer_id,req.body.first_name,req.body.surname,lastname,
                 req.body.gender,req.body.age,req.body.contact_details,
@@ -89,6 +89,7 @@ console.log(err)
      const farmer_Id=req.params.farmer_Id
      const connection=await db.getConnection()
      const [existFarmer]=await connection.execute('select farmer_id from farmer where farmer_id=?',[farmer_Id])
+     const [farm]=await connection.execute('select * from farm where farmer_id=?',[farmer_Id])
      if(existFarmer.length>0){
       const farmerObject=new FarmersDto()
       const ageValue=req.body.age
@@ -97,10 +98,10 @@ console.log(err)
       const contact_details=contact_detailsVlue!==undefined?contact_detailsVlue:'N/A'
       const farming_experienceValue=req.body.farming_experience
       const farming_experience=farming_experienceValue!==undefined?farming_experienceValue:'N/A'
-      const educational_levelValue=req.body.educational_level
-      const educational_level=educational_levelValue!==undefined?educational_levelValue:'N/A'
-      const farm_gps_cordinateValue=req.body.farm_gps_cordinate
-      const farm_gps_cordinate=farm_gps_cordinateValue!==undefined?farm_gps_cordinateValue:'N/A'
+      const education_levelValue=req.body.education_level
+      const education_level=education_levelValue!==undefined?education_levelValue:'N/A'
+      const farm_gps_coordinatesValue=req.body.farm_gps_coordinates
+      const farm_gps_coordinates=farm_gps_coordinatesValue!==undefined?farm_gps_coordinatesValue:'N/A'
       const farm_association_membValue=req.body.farm_association_memb
       const farm_association_memb=farm_association_membValue!==undefined?farm_association_membValue:'N/A'
       const residential_addressValue=req.body.residential_address
@@ -108,10 +109,21 @@ console.log(err)
       farmerObject.setAge(age)
       farmerObject.setcontact_details(contact_details)
       farmerObject.setFarming_experience(farming_experience)
-      farmerObject.setEducational_level(educational_level)
-      farmerObject.setFarm_gps_cordinate(farm_gps_cordinate)
+      farmerObject.setEducation_level(education_level)
+      farmerObject.setFarm_gps_coordinates(farm_gps_coordinates)
       farmerObject.setFarm_association_memb(farm_association_memb)
       farmerObject.setResidential_address(residential_address)
+      farmerObject.setLand_size(req.body.land_size)
+      farmerObject.setFarmLocation(req.body.farm_location)
+      farmerObject.setCrop_type(req.body.crop_type)
+      farmerObject.setSoil_type(req.body.soil_type)
+      farmerObject.setFarming_practice(req.body.farming_practice)
+      farmerObject.setMechanization(req.body.mechanization)
+      farmerObject.setHarvest_dates(req.body.harvest_dates)
+      farmerObject.setYield_per_acre(req.body.yield_per_acre)
+      farmerObject.setMarket_prices(req.body.market_prices)
+      farmerObject.setRevenue(req.body.revenue)
+      farmerObject.setFarm_id(farm[0].FARM_ID)
       farmerObject.setFrmerID(farmer_Id)
      farmerController.updateFarmer(farmerObject)
       next()

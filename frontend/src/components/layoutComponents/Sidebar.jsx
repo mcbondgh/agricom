@@ -1,27 +1,29 @@
 import PropTypes from "prop-types";
 import { Sidebar } from "flowbite-react";
-import { HiChartPie, HiBell, HiUser,HiMail, HiOutlineExclamationCircle} from "react-icons/hi";
+import { HiChartPie, HiBell, HiUser,HiMail} from "react-icons/hi";
 import { AiOutlineAudit } from "react-icons/ai";
 import { RiLandscapeFill } from "react-icons/ri";
 import { TbListDetails, TbActivity,TbMoneybag,TbUsersPlus,TbLogs,TbReport, TbReportMoney,TbCategoryPlus  } from "react-icons/tb";
 import { GiFarmer, GiFruitTree, GiCash, GiSettingsKnobs,GiTreeBranch, GiMasterOfArms} from "react-icons/gi"
 import { SiExpensify } from "react-icons/si";
 import { FaBoxes,FaHandHoldingUsd ,FaPeopleCarry, FaCloudSunRain } from "react-icons/fa";
-import { RiSecurePaymentLine,RiLogoutCircleLine } from "react-icons/ri";
+import { RiSecurePaymentLine,RiLogoutCircleLine  } from "react-icons/ri";
 import { MdOutlineManageAccounts,MdAccessibility } from "react-icons/md";
 import { PiFarm } from "react-icons/pi";
 import { GrSystem } from "react-icons/gr";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { motion } from "framer-motion";
-import {Alert} from "@/components/ui/Alert"
-import CustomTheme from "../../themes/customThemes";
+import CustomTheme from "@/themes/customThemes";
+import { AlertWithResponse } from "@/utils/Alerts";
+import { useNavigate } from 'react-router-dom';
+import { AuthUserContext } from "@/contextManager/context/AppContext";
 
 
 export function SidebarComponent({menuIsOpen}) {
- 
+ const {logout} = useContext(AuthUserContext)
   const [isHovered, setIsHovered] = useState(false)
   const [openCollapse, setOpenCollapse] = useState(null); // Track open collapse section
-
+  const navigate = useNavigate();
   const handleMouseEnter = () => {
     if (menuIsOpen) {
       setIsHovered(false);
@@ -38,7 +40,22 @@ export function SidebarComponent({menuIsOpen}) {
     setOpenCollapse((prevKey) => (prevKey === key ? null : key));
   };
 
-
+  const handleLogout = () => {
+    AlertWithResponse(
+      "Logout", 
+      "Are sure you want to logout?", 
+      () => {
+        console.log("Yes, logout success");
+        // TODO: Call logout API
+        logout(); // Dummy logout function test
+        // Delay navigation slightly to ensure state update propagates
+        setTimeout(() => {
+          navigate("/login");
+        }, 0);
+      }
+    );
+  };
+  
   return (
     <motion.div
     onMouseEnter={handleMouseEnter}
@@ -49,7 +66,7 @@ export function SidebarComponent({menuIsOpen}) {
       <Sidebar aria-label="Sidebar with multi-level dropdown example " theme={CustomTheme.themeSidebar} >
       <Sidebar.Items>
         <Sidebar.ItemGroup>
-          <Sidebar.Item href="/" icon={HiChartPie}>
+          <Sidebar.Item href="/dashboard" icon={HiChartPie}>
             {isHovered || menuIsOpen ? "Dashboard": undefined}
           </Sidebar.Item>
           <Sidebar.Collapse open={openCollapse === 'notification'} onClick={() => handleCollapseClick('notification')} icon={HiBell} label={isHovered || menuIsOpen ? "Notification" : undefined}>
@@ -101,10 +118,7 @@ export function SidebarComponent({menuIsOpen}) {
           <Sidebar.Item icon = {(isHovered || menuIsOpen) && GrSystem } href="/system-params">{isHovered || menuIsOpen ? "System Parameters" : undefined}</Sidebar.Item>
           </Sidebar.Collapse>
           {/* Logout button */}
-          <Alert triggerBtnText = "Logout" btnType={2} btnIcon={RiLogoutCircleLine}
-          triggerIcon = {<HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400" />}
-          message = "Are you sure you want to sign out?"
-          isHovered = {isHovered || menuIsOpen }/>
+          <Sidebar.Item onClick = {handleLogout} className = "cursor-pointer" icon = {(isHovered || menuIsOpen) && RiLogoutCircleLine  }>{isHovered || menuIsOpen ? "Logout" : undefined}</Sidebar.Item>
         </Sidebar.ItemGroup>
       </Sidebar.Items>
     </Sidebar>
