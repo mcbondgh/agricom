@@ -89,25 +89,25 @@ function FarmerInfo({formData, updateFormData, errors, setErrors }) {
         </div>
         <div>
           <span className="flex gap-1">
-          <Label htmlFor="education_level" value="Education Level" /><span className="text-red-500 ml-1">*</span>
+          <Label htmlFor="educational_level" value="Education Level" /><span className="text-red-500 ml-1">*</span>
           </span>
-          <Select color={errors.education_level ? "failure" : "success"} id="education_level" name="education_level" value={formData.education_level || ""} onChange={handleChange}>
+          <Select color={errors.educational_level ? "failure" : "success"} id="educational_level" name="educational_level" value={formData.educational_level || ""} onChange={handleChange}>
             <option value="">Select education level</option>
             <option value="primary">Primary</option>
             <option value="secondary">Secondary</option>
             <option value="tertiary">Tertiary</option>
             <option value="other">Other</option>
           </Select>
-          {errors.education_level && <p className="text-red-500 text-sm">{errors.education_level[0]}</p>}
+          {errors.educational_level && <p className="text-red-500 text-sm">{errors.educational_level[0]}</p>}
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-16">
         <div>
           <span className="flex gap-1">
-          <Label htmlFor="farm_gps_coordinates" value="Farm GPS Coordinates" /><span className="text-red-500 ml-1">*</span>
+          <Label htmlFor="farm_gps_coordinate" value="Farm GPS Coordinates" /><span className="text-red-500 ml-1">*</span>
           </span>
-          <TextInput color={errors.farm_gps_coordinates ? "failure" : "success"} id="farm_gps_coordinates" name="farm_gps_coordinates" value={formData.farm_gps_coordinates || ""} onChange={handleChange}/>
-          {errors.farm_gps_coordinates && <p className="text-red-500 text-sm">{errors.farm_gps_coordinates[0]}</p>}
+          <TextInput color={errors.farm_gps_coordinate ? "failure" : "success"} id="farm_gps_coordinate" name="farm_gps_coordinate" value={formData.farm_gps_coordinate || ""} onChange={handleChange}/>
+          {errors.farm_gps_coordinate && <p className="text-red-500 text-sm">{errors.farm_gps_coordinate[0]}</p>}
         </div>
         <div>
           <span className="flex gap-1">
