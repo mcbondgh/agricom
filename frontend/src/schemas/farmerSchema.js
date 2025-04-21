@@ -48,13 +48,13 @@ export const farmerSchema = z.object({
       message: "Experience must be a number",
     }),
 
-  education_level: z
+  educational_level: z
     .string()
     .refine(val => ["primary", "secondary", "tertiary", "other"].includes(val), {
       message: "Education level is required",
     }),
 
-  farm_gps_coordinates: z
+  farm_gps_coordinate: z
     .string()
     .min(1, "GPS coordinates required"),
 
@@ -165,8 +165,8 @@ export const farmerInfoSchema = farmerSchema.pick({
   contact_details: true,
   residential_address: true,
   farming_experience: true,
-  education_level: true,
-  farm_gps_coordinates: true,
+  educational_level: true,
+  farm_gps_coordinate: true,
   farm_association_memb: true,
 });
 
